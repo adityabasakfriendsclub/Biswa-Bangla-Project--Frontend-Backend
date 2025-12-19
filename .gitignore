@@ -1,0 +1,9 @@
+# Environment variables
+*.env
+Dating Backend/config/config.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
