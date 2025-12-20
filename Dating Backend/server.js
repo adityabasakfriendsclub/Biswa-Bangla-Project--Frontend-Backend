@@ -1,6 +1,6 @@
 // STEP 1: LOAD ENV FIRST (VERY IMPORTANT)
 const dotenv = require("dotenv");
-dotenv.config({ path: "config/config.env" });
+dotenv.config({ path: ".env" });
 
 // STEP 2: NOW IMPORT EVERYTHING ELSE
 const express = require("express");
