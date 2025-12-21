@@ -1,6 +1,10 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const { generateOtp, getOtpExpiry } = require("../utils/generateOtp");
+const {
+  generateOtp,
+  getOtpExpiry,
+  isOtpExpired,
+} = require("../utils/generateOtp");
 const { sendOtpSms, sendPasswordResetOtp } = require("../utils/twilioService");
 
 // ================= REGISTER =================
@@ -8,6 +12,13 @@ exports.registerUser = async (req, res) => {
   try {
     const { firstName, lastName, phone, gender, password, confirmPassword } =
       req.body;
+
+    console.log("📝 Registration request:", {
+      firstName,
+      lastName,
+      phone,
+      gender,
+    });
 
     if (
       !firstName ||
@@ -37,6 +48,9 @@ exports.registerUser = async (req, res) => {
 
     const otp = generateOtp();
     const hashedOtp = await bcrypt.hash(otp, 10);
+    const otpExpires = getOtpExpiry(10); // ✅ 10 MINUTES
+
+    console.log("💾 Creating user with OTP expiry:", new Date(otpExpires));
 
     const user = await User.create({
       firstName,
@@ -45,18 +59,25 @@ exports.registerUser = async (req, res) => {
       gender,
       password,
       otp: hashedOtp,
-      otpExpires: getOtpExpiry(5),
+      otpExpires: otpExpires,
       isVerified: false,
     });
 
+    // Send OTP via SMS
     await sendOtpSms(phone, otp);
+
+    console.log("✅ User created successfully, OTP sent");
 
     res.status(201).json({
       success: true,
       message: "Registered successfully. OTP sent.",
-      data: { userId: user._id },
+      data: {
+        userId: user._id,
+        phone: user.phone,
+      },
     });
   } catch (error) {
+    console.error("❌ Registration error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -64,7 +85,15 @@ exports.registerUser = async (req, res) => {
 // ================= VERIFY OTP =================
 exports.verifyOtp = async (req, res) => {
   try {
-    const { userId, otp } = req.body;
+    const { phone, otp } = req.body; // ✅ Changed to use phone instead of userId
+
+    console.log("🔍 Verify OTP request:", { phone, otp });
+
+    if (!phone || !otp) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Phone and OTP required" });
+    }
 
     if (!/^\d{6}$/.test(otp)) {
       return res
@@ -72,15 +101,29 @@ exports.verifyOtp = async (req, res) => {
         .json({ success: false, message: "Invalid OTP format" });
     }
 
-    const user = await User.findById(userId).select("+otp +otpExpires");
+    const user = await User.findOne({ phone }).select("+otp +otpExpires");
 
-    if (!user || user.otpExpires < Date.now()) {
+    if (!user) {
+      console.log("❌ User not found");
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    console.log("📅 Checking OTP expiry:");
+    console.log("  Current time:", new Date());
+    console.log("  Expiry time:", new Date(user.otpExpires));
+    console.log("  Is expired?", isOtpExpired(user.otpExpires));
+
+    if (isOtpExpired(user.otpExpires)) {
+      console.log("❌ OTP expired");
       return res.status(400).json({ success: false, message: "OTP expired" });
     }
 
-    const valid = await user.compareOTP(otp);
+    const valid = await bcrypt.compare(otp, user.otp);
     if (!valid) {
-      return res.status(400).json({ success: false, message: "Wrong OTP" });
+      console.log("❌ Invalid OTP");
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 
     user.isVerified = true;
@@ -88,8 +131,19 @@ exports.verifyOtp = async (req, res) => {
     user.otpExpires = undefined;
     await user.save();
 
-    res.json({ success: true, message: "Account verified" });
+    console.log("✅ OTP verified successfully");
+
+    res.json({
+      success: true,
+      message: "Account verified successfully",
+      data: {
+        userId: user._id,
+        phone: user.phone,
+        isVerified: true,
+      },
+    });
   } catch (error) {
+    console.error("❌ Verify OTP error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -97,24 +151,39 @@ exports.verifyOtp = async (req, res) => {
 // ================= RESEND OTP =================
 exports.resendOtp = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { phone } = req.body; // ✅ Changed to use phone instead of userId
 
-    const user = await User.findById(userId);
-    if (!user || user.isVerified) {
+    console.log("🔄 Resend OTP request for:", phone);
+
+    const user = await User.findOne({ phone });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (user.isVerified) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid request" });
+        .json({ success: false, message: "User already verified" });
     }
 
     const otp = generateOtp();
     user.otp = await bcrypt.hash(otp, 10);
-    user.otpExpires = getOtpExpiry(5);
+    user.otpExpires = getOtpExpiry(10); // ✅ 10 MINUTES
     await user.save();
 
     await sendOtpSms(user.phone, otp);
 
-    res.json({ success: true, message: "OTP resent" });
+    console.log("✅ New OTP sent");
+
+    res.json({
+      success: true,
+      message: "New OTP sent successfully",
+    });
   } catch (error) {
+    console.error("❌ Resend OTP error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -124,18 +193,47 @@ exports.loginUser = async (req, res) => {
   try {
     const { phone, password } = req.body;
 
+    console.log("🔐 Login request for:", phone);
+
     const user = await User.findOne({ phone }).select("+password");
-    if (!user || !user.isVerified) {
-      return res.status(401).json({ success: false, message: "Invalid login" });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
-    const match = await user.comparePassword(password);
+    if (!user.isVerified) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Account not verified" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({ success: false, message: "Invalid login" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
-    res.json({ success: true, message: "Login successful", user });
+    console.log("✅ Login successful");
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      data: {
+        token: "dummy-token-" + user._id, // Replace with real JWT token
+        user: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          gender: user.gender,
+        },
+      },
+    });
   } catch (error) {
+    console.error("❌ Login error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -160,7 +258,7 @@ exports.forgotPassword = async (req, res) => {
 
     const otp = generateOtp();
     user.otp = await bcrypt.hash(otp, 10);
-    user.otpExpires = getOtpExpiry(5);
+    user.otpExpires = getOtpExpiry(10); // ✅ 10 MINUTES
     user.tempPassword = await bcrypt.hash(newPassword, 10);
     await user.save();
 
@@ -169,9 +267,10 @@ exports.forgotPassword = async (req, res) => {
     res.json({
       success: true,
       message: "Password reset OTP sent",
-      userId: user._id,
+      data: { phone: user.phone },
     });
   } catch (error) {
+    console.error("❌ Forgot password error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -179,17 +278,17 @@ exports.forgotPassword = async (req, res) => {
 // ================= VERIFY FORGOT OTP =================
 exports.verifyForgotPasswordOtp = async (req, res) => {
   try {
-    const { userId, otp } = req.body;
+    const { phone, otp } = req.body;
 
-    const user = await User.findById(userId).select(
+    const user = await User.findOne({ phone }).select(
       "+otp +otpExpires +tempPassword"
     );
 
-    if (!user || user.otpExpires < Date.now()) {
+    if (!user || isOtpExpired(user.otpExpires)) {
       return res.status(400).json({ success: false, message: "OTP expired" });
     }
 
-    const valid = await user.compareOTP(otp);
+    const valid = await bcrypt.compare(otp, user.otp);
     if (!valid) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
@@ -202,6 +301,7 @@ exports.verifyForgotPasswordOtp = async (req, res) => {
 
     res.json({ success: true, message: "Password reset successful" });
   } catch (error) {
+    console.error("❌ Verify forgot password error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
