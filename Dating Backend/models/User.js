@@ -49,10 +49,11 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
 
-    otpExpires: {
-      type: Date,
-      select: false,
-    },
+    // otpExpires: {
+    //   type: Date,
+    //   select: false,
+    // },
+    otpExpires: { type: Number },
 
     // Temporary password for forgot password flow
     tempPassword: {
