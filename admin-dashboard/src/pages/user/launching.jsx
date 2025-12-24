@@ -63,7 +63,7 @@ function Launching() {
       {/* Gradient overlay */}
       <div className="w-full max-w-4xl mx-auto text-center pt-2">
         {/* Maintenance Message */}
-        <p className="text-gray-400 text-base sm:text-lg md:text-xl  sm:mb-4 tracking-wide font-light">
+        <p className="bg-gradient-to-r from-emerald-500 to-teal-600  text-base sm:text-lg md:text-xl  sm:mb-4 tracking-wide font-light">
           Website Is Under Maintenance
         </p>
       </div>
