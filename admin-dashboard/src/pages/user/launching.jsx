@@ -61,17 +61,23 @@ function Launching() {
       </div>
 
       {/* Gradient overlay */}
+      <div className="w-full max-w-4xl mx-auto text-center pt-2">
+        {/* Maintenance Message */}
+        <p className="text-gray-400 text-base sm:text-lg md:text-xl  sm:mb-4 tracking-wide font-light">
+          Website Is Under Maintenance
+        </p>
+      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-transparent to-purple-900/10"></div>
 
       {/* Logo */}
-      <div className="relative z-10 px-4 sm:px-8 lg:px-16 py-6">
-        <div className="flex items-center gap-3">
+      <div className="relative z-10 px-4 sm:px-8 lg:text-center py-6">
+        <div className="flex items-center flex-col gap-3">
           {/* Logo Image */}
           <a href="">
             <img
               src="/images/logo.png"
               alt="Logo"
-              className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain "
+              className="w-50 h-50 sm:w-50 sm:h-50 lg:w-40 lg:h-45  object-cover transition-transform duration-300 hover:scale-110"
             />
           </a>
 
@@ -92,9 +98,9 @@ function Launching() {
       <div className="relative z-10 flex-1 flex items-center px-4 sm:px-8 lg:px-16 py-8">
         <div className="w-full max-w-4xl mx-auto text-center">
           {/* Maintenance Message */}
-          <p className="text-gray-400 text-base sm:text-lg md:text-xl mb-3 sm:mb-4 tracking-wide font-light">
+          {/* <p className="text-gray-400 text-base sm:text-lg md:text-xl mb-3 sm:mb-4 tracking-wide font-light">
             Website Is Under Maintenance
-          </p>
+          </p> */}
 
           {/* Main Heading */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 sm:mb-12 lg:mb-16 tracking-tight">
