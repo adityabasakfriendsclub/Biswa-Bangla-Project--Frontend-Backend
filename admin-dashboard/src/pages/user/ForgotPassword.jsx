@@ -63,12 +63,12 @@ export default function ForgotPassword({
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center px-4">
       {/* Exit Button */}
-      <button
+      {/* <button
         onClick={onExit}
         className="fixed top-4 left-4 px-4 py-2 bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white transition-all shadow-md flex items-center gap-2 font-medium"
       >
         ← Admin Mode
-      </button>
+      </button> */}
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
