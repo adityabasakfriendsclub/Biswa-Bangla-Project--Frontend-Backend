@@ -7,6 +7,7 @@ import VerifyOTP from "./pages/user/VerifyOTP";
 import ForgotPassword from "./pages/user/ForgotPassword";
 import VerifyResetOTP from "./pages/user/VerifyResetOTP";
 import UserHome from "./pages/user/UserHome";
+import Launching from "./pages/user/launching";
 
 function App() {
   const [appMode, setAppMode] = useState("user");
@@ -146,13 +147,16 @@ function App() {
           onExit={handleExitToAdmin}
         />
       )}
-      {userPage === "signup" && (
+      {/* {userPage === "signup" && (
         <SignUp
           onSignUpSuccess={handleSignUpSuccess}
           onNavigateToLogin={() => setUserPage("login")}
           onExit={handleExitToAdmin}
         />
-      )}
+      )} */}
+      {/* for lanching */}
+      {userPage === "signup" && <Launching />}
+      {/* end */}
       {userPage === "verify" && (
         <VerifyOTP
           phone={userPhone}

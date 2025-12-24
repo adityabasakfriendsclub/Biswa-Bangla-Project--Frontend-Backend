@@ -1,4 +1,4 @@
-// src/pages/user/SignUp.jsx
+// // src/pages/user/SignUp.jsx
 import { useState } from "react";
 import { userAuthAPI } from "../../api/userAuth";
 
@@ -67,12 +67,12 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center px-4 py-8">
       {/* Exit Button */}
-      <button
+      {/* <button
         onClick={onExit}
         className="fixed top-4 left-4 px-4 py-2 bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white transition-all shadow-md flex items-center gap-2 font-medium"
       >
         ← Admin Mode
-      </button>
+      </button> */}
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
@@ -195,5 +195,4 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
     </div>
   );
 }
-
-//========================= new
+// export default App;
