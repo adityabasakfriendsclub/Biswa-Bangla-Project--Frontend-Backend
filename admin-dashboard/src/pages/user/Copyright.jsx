@@ -1,3 +1,4 @@
+//  Launching page
 export default function Copyright({
   organizationName = "Biswa Bangla Social Networking Services Club",
   showIcons = true,
