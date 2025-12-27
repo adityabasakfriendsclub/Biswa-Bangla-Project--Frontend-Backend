@@ -25,12 +25,25 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // ==================== MIDDLEWARE ====================
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://biswabanglasocialnetworkingservices.com",
+      "https://www.biswabanglasocialnetworkingservices.com",
+    ],
     credentials: true,
   })
 );
+// app.use(
+//   cors({
+//     origin: process.env.FRONTEND_URL || "http://localhost:5173",
+//     credentials: true,
+//   })
+// );
 app.use(express.json());
 app.use("/uploads", express.static(uploadsDir));
 
@@ -660,12 +673,10 @@ app.post("/api/host/admin/login", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Username and password are required",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required",
+      });
     }
 
     const admin = await Admin.findOne({
@@ -724,12 +735,10 @@ app.use((err, req, res, next) => {
   console.error("❌ Server Error:", err);
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "File too large. Maximum size is 5MB",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "File too large. Maximum size is 5MB",
+      });
     }
     return res.status(400).json({ success: false, message: err.message });
   }
