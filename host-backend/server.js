@@ -759,13 +759,13 @@ async function createInitialAdmin() {
         password: hashedPassword,
         role: "superadmin",
       });
-      console.log("\n🔐 ================================");
-      console.log("   INITIAL ADMIN CREATED");
-      console.log("   ================================");
-      console.log("   Username: superadmin");
-      console.log("   Password: Admin@12345");
-      console.log("   ⚠️  CHANGE PASSWORD IMMEDIATELY!");
-      console.log("   ================================\n");
+      // console.log("\n🔐 ================================");
+      // console.log("   INITIAL ADMIN CREATED");
+      // console.log("   ================================");
+      // console.log("   Username: superadmin");
+      // console.log("   Password: Admin@12345");
+      // console.log("   ⚠️  CHANGE PASSWORD IMMEDIATELY!");
+      // console.log("   ================================\n");
     }
   } catch (error) {
     console.error("❌ Admin creation error:", error);
