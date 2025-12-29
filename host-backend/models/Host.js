@@ -32,6 +32,28 @@ const HostSchema = new mongoose.Schema({
     required: [true, "Gender is required"],
     enum: ["male", "female", "others"],
   },
+
+  // ✅ NEW FIELDS
+  dateOfBirth: {
+    type: Date,
+    required: [true, "Date of birth is required"],
+  },
+  isHost: {
+    type: Boolean,
+    default: false,
+  },
+  isHostPremium: {
+    type: Boolean,
+    default: false,
+  },
+  interAgencyCode: {
+    type: String,
+    default: null,
+    uppercase: true,
+    sparse: true, // Allows null values while maintaining uniqueness for non-null values
+    unique: true,
+  },
+
   agencyCode: {
     type: String,
     default: null,
@@ -39,10 +61,6 @@ const HostSchema = new mongoose.Schema({
   bio: {
     type: String,
     default: "",
-  },
-  dateOfBirth: {
-    type: Date,
-    default: null,
   },
   interests: {
     type: [String],

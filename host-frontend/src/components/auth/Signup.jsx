@@ -1,4 +1,4 @@
-// PURPOSE: Host (End User) registration page
+// PURPOSE: Host (End User) registration page with DOB, Host Premium, and Inter-Agency Code
 
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -12,31 +12,69 @@ const Signup = () => {
     firstName: "",
     lastName: "",
     phone: "",
+    dateOfBirth: "",
     agencyCode: "",
     password: "",
     confirmPassword: "",
     gender: "",
+    isHost: false,
+    isHostPremium: false,
+    interAgencyCode: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      // If user unchecks "Is Host", reset host-related fields
+      if (name === "isHost" && !checked) {
+        newData.isHostPremium = false;
+        newData.interAgencyCode = "";
+      }
+
+      // If user unchecks "Host Premium", reset inter-agency code
+      if (name === "isHostPremium" && !checked) {
+        newData.interAgencyCode = "";
+      }
+
+      return newData;
+    });
+
     setError("");
+  };
+
+  // Calculate age from date of birth
+  const calculateAge = (dob) => {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (
       !formData.firstName ||
       !formData.lastName ||
       !formData.phone ||
+      !formData.dateOfBirth ||
       !formData.password ||
       !formData.confirmPassword ||
       !formData.gender
@@ -45,6 +83,14 @@ const Signup = () => {
       return;
     }
 
+    // Age validation (18+)
+    const age = calculateAge(formData.dateOfBirth);
+    if (age < 18) {
+      setError("You must be at least 18 years old to sign up");
+      return;
+    }
+
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -55,18 +101,35 @@ const Signup = () => {
       return;
     }
 
+    // Host Premium validation
+    if (formData.isHostPremium && !formData.interAgencyCode) {
+      setError("Inter-Agency Code is required for Premium Hosts");
+      return;
+    }
+
+    if (formData.interAgencyCode && formData.interAgencyCode.length < 6) {
+      setError("Inter-Agency Code must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      const response = await hostAPI.signup({
+      const signupData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth,
         password: formData.password,
         gender: formData.gender,
+        isHost: formData.isHost,
+        isHostPremium: formData.isHostPremium,
         agencyCode: formData.agencyCode || undefined,
-      });
+        interAgencyCode: formData.interAgencyCode || undefined,
+      };
+
+      const response = await hostAPI.signup(signupData);
 
       if (response.data.success) {
         setSuccess("OTP sent to your phone!");
@@ -90,11 +153,11 @@ const Signup = () => {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center px-4"
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 py-8"
       style={{ backgroundImage: `url(${authBg})` }}
     >
       {/* Glass Card */}
-      <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl my-8">
         {/* Back Button */}
         <Link
           to="/login"
@@ -146,6 +209,26 @@ const Signup = () => {
             className="w-full bg-white rounded-2xl p-4 border-2 border-yellow-400 outline-none focus:border-yellow-500"
           />
 
+          {/* Date of Birth */}
+          <div>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleInputChange}
+              disabled={loading}
+              max={
+                new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+                  .toISOString()
+                  .split("T")[0]
+              }
+              className="w-full bg-white rounded-2xl p-4 border-2 border-yellow-400 outline-none focus:border-yellow-500"
+            />
+            <p className="text-xs text-gray-500 mt-1 ml-2">
+              Enter your Date of Birth and You must be 18+ years old
+            </p>
+          </div>
+
           {/* Agency Code */}
           <input
             type="text"
@@ -174,6 +257,62 @@ const Signup = () => {
               </label>
             ))}
           </div>
+
+          {/* Is Host Checkbox */}
+          <div className="bg-yellow-50 rounded-2xl p-4 border-2 border-yellow-300">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="isHost"
+                checked={formData.isHost}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-5 h-5 text-yellow-400 rounded focus:ring-yellow-500"
+              />
+              <span className="font-semibold text-gray-700">
+                Are you want a Premium Host?
+              </span>
+            </label>
+          </div>
+
+          {/* Host Premium Section - Only show if isHost is true */}
+          {formData.isHost && (
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-4 border-2 border-yellow-400 space-y-4">
+              {/* Host Premium Checkbox */}
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="isHostPremium"
+                  checked={formData.isHostPremium}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="w-5 h-5 text-yellow-400 rounded focus:ring-yellow-500"
+                />
+                <span className="font-semibold text-gray-700">
+                  Upgrade to Premium Host 👑
+                </span>
+              </label>
+
+              {/* Inter-Agency Code - Only show if isHostPremium is true */}
+              {formData.isHostPremium && (
+                <div>
+                  <input
+                    type="text"
+                    name="interAgencyCode"
+                    placeholder="Inter-Agency Code (Required)"
+                    value={formData.interAgencyCode}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                    minLength="6"
+                    className="w-full bg-white rounded-xl p-3 border-2 border-orange-400 outline-none focus:border-orange-500"
+                  />
+                  <p className="text-xs text-gray-600 mt-1 ml-2">
+                    ⚠️ Minimum 6 characters. Cannot be changed after signup.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Password */}
           <input
