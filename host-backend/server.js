@@ -38,12 +38,6 @@ app.use(
     credentials: true,
   })
 );
-// app.use(
-//   cors({
-//     origin: process.env.FRONTEND_URL || "http://localhost:5173",
-//     credentials: true,
-//   })
-// );
 app.use(express.json());
 app.use("/uploads", express.static(uploadsDir));
 
@@ -93,7 +87,22 @@ const upload = multer({
 // ==================== OTP STORAGE ====================
 const otpStorage = {};
 
-// ==================== VALIDATION RULES ====================
+// ==================== HELPER FUNCTION: CALCULATE AGE ====================
+const calculateAge = (dateOfBirth) => {
+  const today = new Date();
+  const birthDate = new Date(dateOfBirth);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+};
+
+// ==================== UPDATED VALIDATION RULES ====================
 const signupValidation = [
   body("firstName").trim().notEmpty().withMessage("First name required"),
   body("lastName").trim().notEmpty().withMessage("Last name required"),
@@ -106,6 +115,47 @@ const signupValidation = [
   body("gender")
     .isIn(["male", "female", "others"])
     .withMessage("Valid gender required"),
+  body("dateOfBirth")
+    .notEmpty()
+    .withMessage("Date of birth required")
+    .isISO8601()
+    .withMessage("Invalid date format")
+    .custom((value) => {
+      const age = calculateAge(value);
+      if (age < 18) {
+        throw new Error("You must be at least 18 years old");
+      }
+      return true;
+    }),
+  body("isHost")
+    .optional()
+    .isBoolean()
+    .withMessage("isHost must be true or false"),
+  body("isHostPremium")
+    .optional()
+    .isBoolean()
+    .withMessage("isHostPremium must be true or false")
+    .custom((value, { req }) => {
+      // Premium can only be true if isHost is true
+      if (value && !req.body.isHost) {
+        throw new Error("You must be a Host to enable Premium");
+      }
+      return true;
+    }),
+  body("interAgencyCode")
+    .optional()
+    .trim()
+    .custom((value, { req }) => {
+      // If isHostPremium is true, interAgencyCode is required
+      if (req.body.isHostPremium && !value) {
+        throw new Error("Inter-Agency Code required for Premium Hosts");
+      }
+      // If provided, must be at least 6 characters
+      if (value && value.length < 6) {
+        throw new Error("Inter-Agency Code must be at least 6 characters");
+      }
+      return true;
+    }),
 ];
 
 const handleValidation = (req, res, next) => {
@@ -193,15 +243,25 @@ app.get("/health", (req, res) => {
 
 // ==================== HOST AUTH ROUTES ====================
 
-// 1. Host Signup - Send OTP
+// 1. Host Signup - Send OTP (UPDATED)
 app.post(
   "/api/host/signup",
   signupValidation,
   handleValidation,
   async (req, res) => {
     try {
-      const { firstName, lastName, phone, password, gender, agencyCode } =
-        req.body;
+      const {
+        firstName,
+        lastName,
+        phone,
+        password,
+        gender,
+        dateOfBirth,
+        agencyCode,
+        isHost,
+        isHostPremium,
+        interAgencyCode,
+      } = req.body;
 
       // Check if host already exists
       const existingHost = await Host.findOne({ phone });
@@ -209,6 +269,27 @@ app.post(
         return res.status(400).json({
           success: false,
           message: "Phone number already registered",
+        });
+      }
+
+      // Check if inter-agency code already exists (if provided)
+      if (interAgencyCode) {
+        const codeExists = await Host.findOne({
+          interAgencyCode: interAgencyCode.toUpperCase(),
+        });
+        if (codeExists) {
+          return res.status(400).json({
+            success: false,
+            message: "Inter-Agency Code already exists. Please choose another.",
+          });
+        }
+      }
+
+      // Validate: isHostPremium can only be true if isHost is true
+      if (isHostPremium && !isHost) {
+        return res.status(400).json({
+          success: false,
+          message: "You must be a Host to enable Premium",
         });
       }
 
@@ -225,12 +306,33 @@ app.post(
       // Store OTP and user data
       otpStorage[phone] = {
         otp,
-        userData: { firstName, lastName, phone, password, gender, agencyCode },
+        userData: {
+          firstName,
+          lastName,
+          phone,
+          password,
+          gender,
+          dateOfBirth,
+          agencyCode,
+          isHost: isHost || false,
+          isHostPremium: isHostPremium || false,
+          interAgencyCode: interAgencyCode || null,
+        },
         expiresAt: Date.now() + 5 * 60 * 1000,
         type: "signup",
       };
 
       console.log(`📱 [HOST SIGNUP] OTP for ${phone}: ${otp}`);
+      console.log(
+        `   📋 User Type: ${isHost ? "Host" : "User"} ${
+          isHostPremium ? "(Premium)" : ""
+        }`
+      );
+      if (interAgencyCode) {
+        console.log(
+          `   🆔 Inter-Agency Code: ${interAgencyCode.toUpperCase()}`
+        );
+      }
 
       res.json({
         success: true,
@@ -244,7 +346,7 @@ app.post(
   }
 );
 
-// 2. Verify OTP & Complete Registration
+// 2. Verify OTP & Complete Registration (UPDATED)
 app.post("/api/host/verify-signup", async (req, res) => {
   try {
     const { phone, otp } = req.body;
@@ -266,14 +368,20 @@ app.post("/api/host/verify-signup", async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(otpData.userData.password, 10);
 
-    // Create new host
+    // Create new host with all new fields
     const newHost = new Host({
       firstName: otpData.userData.firstName,
       lastName: otpData.userData.lastName,
       phone: otpData.userData.phone,
       password: hashedPassword,
       gender: otpData.userData.gender,
+      dateOfBirth: otpData.userData.dateOfBirth,
       agencyCode: otpData.userData.agencyCode,
+      isHost: otpData.userData.isHost,
+      isHostPremium: otpData.userData.isHostPremium,
+      interAgencyCode: otpData.userData.interAgencyCode
+        ? otpData.userData.interAgencyCode.toUpperCase()
+        : null,
       isVerified: true,
     });
 
@@ -287,6 +395,14 @@ app.post("/api/host/verify-signup", async (req, res) => {
     );
 
     console.log(`✅ [HOST REGISTERED] ${phone}`);
+    console.log(
+      `   📋 Type: ${newHost.isHost ? "Host" : "User"} ${
+        newHost.isHostPremium ? "(Premium)" : ""
+      }`
+    );
+    if (newHost.interAgencyCode) {
+      console.log(`   🆔 Inter-Agency Code: ${newHost.interAgencyCode}`);
+    }
 
     res.json({
       success: true,
@@ -298,11 +414,25 @@ app.post("/api/host/verify-signup", async (req, res) => {
         lastName: newHost.lastName,
         phone: newHost.phone,
         gender: newHost.gender,
+        dateOfBirth: newHost.dateOfBirth,
+        isHost: newHost.isHost,
+        isHostPremium: newHost.isHostPremium,
+        interAgencyCode: newHost.interAgencyCode,
         isVerified: newHost.isVerified,
       },
     });
   } catch (error) {
     console.error("❌ Verify signup error:", error);
+
+    // Handle duplicate inter-agency code error
+    if (error.code === 11000 && error.keyPattern?.interAgencyCode) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Inter-Agency Code already exists. Please try again with a different code.",
+      });
+    }
+
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
@@ -357,6 +487,10 @@ app.post("/api/host/login", async (req, res) => {
         lastName: host.lastName,
         phone: host.phone,
         gender: host.gender,
+        dateOfBirth: host.dateOfBirth,
+        isHost: host.isHost,
+        isHostPremium: host.isHostPremium,
+        interAgencyCode: host.interAgencyCode,
         isVerified: host.isVerified,
       },
     });
