@@ -45,12 +45,24 @@ const Login = () => {
 
       if (response.data.success) {
         setSuccess("Login successful!");
+
+        // Save user data to auth context
         login(response.data.token, response.data.user);
-        setTimeout(() => navigate("/dashboard"), 1000);
+
+        // Determine redirect based on user type
+        const redirectPath = response.data.user.isHost
+          ? "/host/home"
+          : "/dashboard";
+
+        console.log("✅ Login successful, redirecting to:", redirectPath);
+        console.log("User data:", response.data.user);
+
+        setTimeout(() => navigate(redirectPath), 1000);
       } else {
         setError(response.data.message || "Login failed");
       }
     } catch (err) {
+      console.error("Login error:", err);
       setError(
         err.response?.data?.message || "Network error. Please try again."
       );
@@ -164,7 +176,13 @@ const Login = () => {
         </div>
 
         <p className="text-center text-gray-500 text-sm mt-6">
-          © 2025 Dating App. Find Your Partner.
+          {/* FOOTER */}
+          <footer className="absolute bottom-16 left-0 right-0 text-center px-4 py-4">
+            <p className="text-xs text-gray-600">
+              © 2025 Biswa Bangla Social Networking Services Club.
+            </p>
+            <p className="text-xs text-gray-500">All rights reserved.</p>
+          </footer>
         </p>
       </div>
     </div>
