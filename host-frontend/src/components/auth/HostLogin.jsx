@@ -329,7 +329,7 @@ const HostLogin = () => {
         </form>
 
         {/* Default Credentials (Admin only) */}
-        {loginMode === "admin" && (
+        {/* {loginMode === "admin" && (
           <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
             <p className="text-xs text-purple-800 font-semibold mb-2">
               🔐 Default Admin Credentials:
@@ -346,7 +346,7 @@ const HostLogin = () => {
               </p>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Agency Signup Link */}
         {loginMode === "agency" && (

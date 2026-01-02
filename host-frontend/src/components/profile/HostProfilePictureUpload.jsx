@@ -1,12 +1,4 @@
 // FILE: frontend/src/components/profile/HostProfilePictureUpload.jsx
-// PURPOSE: Component for uploading host profile pictures
-// ACTION: CREATE NEW FILE in frontend/src/components/profile/ folder
-//
-// Features:
-// - Image preview before upload
-// - File validation (type and size)
-// - Upload progress indication
-// - Error handling
 
 import React, { useState, useRef } from "react";
 import { hostAPI, uploadHelper } from "../../services/api";
@@ -88,7 +80,7 @@ const HostProfilePictureUpload = ({ currentImage, onUploadSuccess }) => {
             <img
               src={
                 preview.startsWith("/")
-                  ? `http://localhost:3000${preview}`
+                  ? `https://biswabanglasocialnetworkingservices.com${preview}`
                   : preview
               }
               alt="Profile"
