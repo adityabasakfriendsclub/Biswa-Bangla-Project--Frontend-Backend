@@ -33,7 +33,7 @@ const Admin = require("./models/Admin");
 const { sendOTP, generateOTP } = require("./services/smsService");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // ==================== CREATE HTTP SERVER FOR SOCKET.IO ====================
 const server = http.createServer(app);
@@ -2228,9 +2228,12 @@ process.on("SIGINT", () => {
   console.log("\n👋 SIGINT signal received: closing HTTP server");
   server.close(() => {
     console.log("✅ HTTP server closed");
-    mongoose.connection.close(false, () => {
-      console.log("✅ MongoDB connection closed");
-      process.exit(0);
-    });
+    mongoose.connection
+      .close(false)
+      .then(() => {
+        console.log("✅ MongoDB connection closed");
+        process.exit(0);
+      })
+      .catch((err) => console.error(err));
   });
 });

@@ -274,7 +274,7 @@ const UserDashboard = () => {
 
   const getProfilePicture = (host) => {
     if (host.profilePicture) {
-      return `${import.meta.env.VITE_API_URL || "http://localhost:3000"}${
+      return `${import.meta.env.VITE_API_URL || "http://localhost:3001"}${
         host.profilePicture
       }`;
     }
