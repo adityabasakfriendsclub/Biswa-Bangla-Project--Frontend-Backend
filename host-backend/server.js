@@ -95,10 +95,38 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static(uploadsDir));
+// app.use("/uploads", express.static(uploadsDir));
+// fixed 6
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    // Log access attempt
+    console.log(`📥 File requested: ${req.path}`);
+
+    // Set CORS headers
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+
+    next();
+  },
+  express.static(uploadsDir, {
+    setHeaders: (res, path) => {
+      // Additional headers for specific file types
+      if (
+        path.endsWith(".jpg") ||
+        path.endsWith(".jpeg") ||
+        path.endsWith(".png")
+      ) {
+        res.setHeader("Content-Type", "image/jpeg");
+      }
+    },
+  })
+);
 
 console.log("📁 Static files served from:", uploadsDir);
-
 // ==================== REQUEST LOGGING MIDDLEWARE ====================
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
@@ -1255,45 +1283,45 @@ app.post(
 );
 // ===============end
 // old start
-app.delete(
-  "/api/host/delete-profile-picture",
-  authenticateHost,
-  async (req, res) => {
-    try {
-      console.log("📥 DELETE /api/host/delete-profile-picture called");
-      const host = await Host.findById(req.user.userId);
-      if (!host) {
-        return res.status(404).json({
-          success: false,
-          message: "Host not found",
-        });
-      }
+// app.delete(
+//   "/api/host/delete-profile-picture",
+//   authenticateHost,
+//   async (req, res) => {
+//     try {
+//       console.log("📥 DELETE /api/host/delete-profile-picture called");
+//       const host = await Host.findById(req.user.userId);
+//       if (!host) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "Host not found",
+//         });
+//       }
 
-      if (host.profilePicture) {
-        const imagePath = path.join(__dirname, host.profilePicture);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-        host.profilePicture = null;
-        await host.save();
-      }
+//       if (host.profilePicture) {
+//         const imagePath = path.join(__dirname, host.profilePicture);
+//         if (fs.existsSync(imagePath)) {
+//           fs.unlinkSync(imagePath);
+//         }
+//         host.profilePicture = null;
+//         await host.save();
+//       }
 
-      console.log(`✅ [PROFILE PICTURE] Deleted for host: ${host.phone}`);
+//       console.log(`✅ [PROFILE PICTURE] Deleted for host: ${host.phone}`);
 
-      res.json({
-        success: true,
-        message: "Profile picture deleted successfully",
-      });
-    } catch (error) {
-      console.error("❌ Delete profile picture error:", error);
-      res.status(500).json({
-        success: false,
-        message: "Server error",
-        error: error.message,
-      });
-    }
-  }
-);
+//       res.json({
+//         success: true,
+//         message: "Profile picture deleted successfully",
+//       });
+//     } catch (error) {
+//       console.error("❌ Delete profile picture error:", error);
+//       res.status(500).json({
+//         success: false,
+//         message: "Server error",
+//         error: error.message,
+//       });
+//     }
+//   }
+// );
 // old end
 // new start
 app.delete(
@@ -1424,13 +1452,111 @@ app.get("/api/host/account/images", authenticateHost, async (req, res) => {
     });
   }
 });
+// new 6
 
+// app.post(
+//   "/api/host/account/upload-images",
+//   authenticateHost,
+//   attachHostInfo, // ✅ ADD THIS
+//   uploadImage.fields([
+//     // ✅ CHANGED from upload to uploadImage
+//     { name: "image1", maxCount: 1 },
+//     { name: "image2", maxCount: 1 },
+//     { name: "image3", maxCount: 1 },
+//     { name: "image4", maxCount: 1 },
+//     { name: "image5", maxCount: 1 },
+//   ]),
+//   async (req, res) => {
+//     try {
+//       const host = await Host.findById(req.user.userId);
+//       if (!host) {
+//         // ✅ ADD: Delete uploaded files if host not found
+//         if (req.files) {
+//           Object.values(req.files)
+//             .flat()
+//             .forEach((file) => deleteFile(file.path));
+//         }
+//         return res.status(404).json({
+//           success: false,
+//           message: "Host not found",
+//         });
+//       }
+
+//       if (!req.files || Object.keys(req.files).length === 0) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "No files uploaded",
+//         });
+//       }
+
+//       const images = [];
+
+//       // Process uploaded images
+//       for (let i = 1; i <= 5; i++) {
+//         const fieldName = `image${i}`;
+//         if (req.files[fieldName]) {
+//           const imageUrl = getRelativePath(req.files[fieldName][0].path); // ✅ CHANGED
+//           images.push(imageUrl);
+//           console.log(`✅ Processed ${fieldName}:`, imageUrl);
+//         }
+//       }
+
+//       if (images.length === 0) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "No valid images processed",
+//         });
+//       }
+
+//       // ✅ ADD: Delete old images before replacing
+//       const existingImages = host.images || [];
+//       existingImages.forEach((img) => deleteFile(img));
+
+//       // Merge with existing images
+//       const mergedImages = [...images];
+//       for (let i = mergedImages.length; i < 5; i++) {
+//         if (existingImages[i]) {
+//           mergedImages.push(existingImages[i]);
+//         }
+//       }
+
+//       host.images = mergedImages.slice(0, 5);
+//       await host.save();
+
+//       console.log(
+//         `✅ [IMAGES] Uploaded ${images.length} images for: ${req.hostData.fullName}`
+//       ); // ✅ CHANGED
+//       console.log(
+//         `📁 Stored in: uploads/images/${req.user.userId}-${req.hostName}`
+//       ); // ✅ ADD
+
+//       res.json({
+//         success: true,
+//         message: "Images uploaded successfully",
+//         images: host.images,
+//       });
+//     } catch (error) {
+//       console.error("❌ Upload images error:", error);
+//       // ✅ ADD: Delete uploaded files on error
+//       if (req.files) {
+//         Object.values(req.files)
+//           .flat()
+//           .forEach((file) => deleteFile(file.path));
+//       }
+//       res.status(500).json({
+//         success: false,
+//         message: error.message || "Server error",
+//       });
+//     }
+//   }
+// );
+// new-end
+// fixed 6
 app.post(
   "/api/host/account/upload-images",
   authenticateHost,
-  attachHostInfo, // ✅ ADD THIS
+  attachHostInfo,
   uploadImage.fields([
-    // ✅ CHANGED from upload to uploadImage
     { name: "image1", maxCount: 1 },
     { name: "image2", maxCount: 1 },
     { name: "image3", maxCount: 1 },
@@ -1439,9 +1565,13 @@ app.post(
   ]),
   async (req, res) => {
     try {
+      console.log("📤 Upload request received");
+      console.log("   User ID:", req.user.userId);
+      console.log("   Host Name:", req.hostName);
+      console.log("   Files:", Object.keys(req.files || {}));
+
       const host = await Host.findById(req.user.userId);
       if (!host) {
-        // ✅ ADD: Delete uploaded files if host not found
         if (req.files) {
           Object.values(req.files)
             .flat()
@@ -1462,11 +1592,10 @@ app.post(
 
       const images = [];
 
-      // Process uploaded images
       for (let i = 1; i <= 5; i++) {
         const fieldName = `image${i}`;
         if (req.files[fieldName]) {
-          const imageUrl = getRelativePath(req.files[fieldName][0].path); // ✅ CHANGED
+          const imageUrl = getRelativePath(req.files[fieldName][0].path);
           images.push(imageUrl);
           console.log(`✅ Processed ${fieldName}:`, imageUrl);
         }
@@ -1479,11 +1608,9 @@ app.post(
         });
       }
 
-      // ✅ ADD: Delete old images before replacing
       const existingImages = host.images || [];
       existingImages.forEach((img) => deleteFile(img));
 
-      // Merge with existing images
       const mergedImages = [...images];
       for (let i = mergedImages.length; i < 5; i++) {
         if (existingImages[i]) {
@@ -1494,12 +1621,7 @@ app.post(
       host.images = mergedImages.slice(0, 5);
       await host.save();
 
-      console.log(
-        `✅ [IMAGES] Uploaded ${images.length} images for: ${req.hostData.fullName}`
-      ); // ✅ CHANGED
-      console.log(
-        `📁 Stored in: uploads/images/${req.user.userId}-${req.hostName}`
-      ); // ✅ ADD
+      console.log(`✅ [IMAGES] Uploaded ${images.length} images`);
 
       res.json({
         success: true,
@@ -1508,7 +1630,6 @@ app.post(
       });
     } catch (error) {
       console.error("❌ Upload images error:", error);
-      // ✅ ADD: Delete uploaded files on error
       if (req.files) {
         Object.values(req.files)
           .flat()
@@ -1517,11 +1638,11 @@ app.post(
       res.status(500).json({
         success: false,
         message: error.message || "Server error",
+        error: process.env.NODE_ENV === "development" ? error.stack : undefined,
       });
     }
   }
 );
-// new-end
 // ==================== VIDEO ROUTES ====================
 
 app.get("/api/host/account/myvideos", authenticateHost, async (req, res) => {

@@ -208,14 +208,14 @@ const MyVideos = () => {
       {/* Club Logo */}
       <div className="flex justify-center py-4">
         <img
-          src="./club-logo.png"
-          alt="Club"
+          src={`${import.meta.env.BASE_URL}club-logo.png`}
+          alt="Club Logo"
           className="h-14 w-14 object-contain"
           onError={(e) => {
-            // Use a fallback if primary image fails
-            e.target.src =
-              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIGZpbGw9IiNFMEUwRTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIvPjwvc3ZnPg==";
-            e.target.alt = "Logo unavailable";
+            // Fallback to emoji if image fails
+            e.target.style.display = "none";
+            e.target.parentElement.innerHTML =
+              '<div class="h-14 w-14 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xl">♣️</div>';
           }}
         />
       </div>
