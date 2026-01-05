@@ -76,7 +76,8 @@ function Launching() {
           {/* Logo Image */}
           <a href="/">
             <img
-              src="/images/logo.png"
+              // src="/images/logo.png"
+              src="/logo.png"
               alt="Logo"
               className="w-40 h-40 sm:w-44 sm:h-44 lg:w-48 lg:h-48 object-cover transition-transform duration-300 hover:scale-110"
             />
@@ -155,7 +156,8 @@ function Launching() {
       {/* Rocket Animation */}
       <div className="relative z-10">
         <img
-          src="/images/rocket.png"
+          // src="/images/rocket.png"
+          src="/rocket.png"
           alt="Rocket"
           className="hidden lg:block absolute right-[10%] bottom-0 w-[250px] animate-rocket"
         />
