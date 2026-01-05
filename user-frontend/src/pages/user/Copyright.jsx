@@ -128,7 +128,9 @@ export default function Copyright({
       name: "UDYAM Registration",
       number: "UDYAM-WB-14-0244369",
       icon: "🏭",
-      image: "/images/udyam-certificate.jpg",
+      // image: "/images/udyam-certificate.jpg",
+      image: "/udyam-certificate.jpg",
+
       details: "Biswa Bharat Social Networking Club",
       year: "2025-26",
     },
@@ -137,7 +139,9 @@ export default function Copyright({
       name: "GST Registration",
       number: "19BGVPM9841D1ZP",
       icon: "💰",
-      image: "/images/gst-certificate.jpg",
+      // image: "/images/gst-certificate.jpg",
+      image: "/gst-certificate.jpg",
+
       details: "Government of India",
       year: "Active",
     },
