@@ -89,6 +89,7 @@ function Launching() {
               BISWA BANGLA
             </div>
             <div className="text-xs sm:text-sm lg:text-base text-gray-300 font-normal">
+              {/* SOCIAL NETWORKING CLUB */}
               SOCIAL NETWORKING CLUB
             </div>
             <div className="text-xs text-gray-400 mt-1">EST. 2025 | BBSNC</div>
