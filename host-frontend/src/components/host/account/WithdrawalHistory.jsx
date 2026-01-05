@@ -61,10 +61,15 @@ const WithdrawalHistory = () => {
 
       <div className="flex justify-center py-4">
         <img
-          src="/club-logo.png"
-          alt="Club"
-          className="h-14 w-14"
-          onError={(e) => (e.target.src = "https://via.placeholder.com/56")}
+          src={`${import.meta.env.BASE_URL}club-logo.png`}
+          alt="Club Logo"
+          className="h-14 w-14 object-contain"
+          onError={(e) => {
+            // Fallback to emoji if image fails
+            e.target.style.display = "none";
+            e.target.parentElement.innerHTML =
+              '<div class="h-14 w-14 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xl">♣️</div>';
+          }}
         />
       </div>
 

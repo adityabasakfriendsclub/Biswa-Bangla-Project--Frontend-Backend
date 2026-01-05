@@ -129,7 +129,7 @@ export default function Copyright({
       number: "UDYAM-WB-14-0244369",
       icon: "🏭",
       // image: "/images/udyam-certificate.jpg",
-      image: "/udyams-certificates.jpg.jpg",
+      image: "/udyams-certificates.jpg",
 
       details: "Biswa Bharat Social Networking Club",
       year: "2025-26",
