@@ -10,6 +10,7 @@ const fs = require("fs");
 // ✅ Add this after existing requires
 const callRoutes = require("./routes/callRoutes");
 const callService = require("./services/callService");
+const adminRoutes = require("./routes/adminRoutes");
 // ✅ Import new upload configurations
 const {
   uploadImage,
@@ -97,10 +98,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use("/uploads", express.static(uploadsDir));
 // fixed 6
+// ==================== SERVE UPLOADED FILES ====================
 app.use(
   "/uploads",
   (req, res, next) => {
-    // Log access attempt
     console.log(`📥 File requested: ${req.path}`);
 
     // Set CORS headers
@@ -113,20 +114,22 @@ app.use(
     next();
   },
   express.static(uploadsDir, {
-    setHeaders: (res, path) => {
-      // Additional headers for specific file types
-      if (
-        path.endsWith(".jpg") ||
-        path.endsWith(".jpeg") ||
-        path.endsWith(".png")
-      ) {
+    setHeaders: (res, filePath) => {
+      // Set correct MIME types
+      if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
         res.setHeader("Content-Type", "image/jpeg");
+      } else if (filePath.endsWith(".png")) {
+        res.setHeader("Content-Type", "image/png");
+      } else if (filePath.endsWith(".mp4")) {
+        res.setHeader("Content-Type", "video/mp4");
+      } else if (filePath.endsWith(".webm")) {
+        res.setHeader("Content-Type", "video/webm");
       }
     },
   })
 );
 
-console.log("📁 Static files served from:", uploadsDir);
+console.log("🗂️ Static files served from:", uploadsDir);
 // ==================== REQUEST LOGGING MIDDLEWARE ====================
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
@@ -152,6 +155,9 @@ mongoose
 // Video Call Routes
 app.use("/api/calls", callRoutes);
 console.log("✅ Call routes registered at /api/calls");
+//for admin
+app.use("/api/admin", adminRoutes);
+console.log("✅ Admin routes registered at /api/admin");
 // ==================== OTP STORAGE ====================
 const otpStorage = {};
 
@@ -1910,6 +1916,29 @@ app.post(
 );
 // new end
 // ==================== AUDITION VIDEO ROUTES ====================
+// app.get("/api/host/account/audition", authenticateHost, async (req, res) => {
+//   try {
+//     const host = await Host.findById(req.user.userId).select("auditionVideo");
+//     if (!host) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Host not found",
+//       });
+//     }
+
+//     res.json({
+//       success: true,
+//       auditionVideo: host.auditionVideo || null,
+//     });
+//   } catch (error) {
+//     console.error("❌ Get audition error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//     });
+//   }
+// });
+// ==================== AUDITION VIDEO ROUTES ====================
 app.get("/api/host/account/audition", authenticateHost, async (req, res) => {
   try {
     const host = await Host.findById(req.user.userId).select("auditionVideo");
@@ -1920,9 +1949,22 @@ app.get("/api/host/account/audition", authenticateHost, async (req, res) => {
       });
     }
 
+    // ✅ FIX: Ensure full URL with HTTPS in production
+    let auditionVideo = host.auditionVideo;
+    if (auditionVideo?.url) {
+      const baseURL =
+        process.env.NODE_ENV === "production"
+          ? "https://biswabanglasocialnetworkingservices.com"
+          : "http://localhost:3001";
+
+      if (!auditionVideo.url.startsWith("http")) {
+        auditionVideo.url = `${baseURL}${auditionVideo.url}`;
+      }
+    }
+
     res.json({
       success: true,
-      auditionVideo: host.auditionVideo || null,
+      auditionVideo: auditionVideo || null,
     });
   } catch (error) {
     console.error("❌ Get audition error:", error);

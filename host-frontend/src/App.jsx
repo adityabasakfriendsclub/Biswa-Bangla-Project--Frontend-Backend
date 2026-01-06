@@ -264,6 +264,7 @@ import HostLogin from "./components/auth/HostLogin";
 
 /* ===================== DASHBOARD ===================== */
 import Dashboard from "./components/Dashboard";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 /* ===================== HOST PAGES ===================== */
 import HostHome from "./components/host/HostHome";
@@ -438,6 +439,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />
