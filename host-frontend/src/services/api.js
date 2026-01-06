@@ -168,11 +168,23 @@ export const agencyAPI = {
 };
 
 // ==================== ADMIN API ====================
+// export const adminAPI = {
+//   login: (data) => api.post("/host/admin/login", data),
+//   getStats: () => api.get("/host/admin/stats"),
+//   getAllAgencies: () => api.get("/host/admin/agencies"),
+//   getAllHosts: () => api.get("/host/admin/users"),
+// };
+// ==================== ADMIN API ====================
 export const adminAPI = {
   login: (data) => api.post("/host/admin/login", data),
-  getStats: () => api.get("/host/admin/stats"),
-  getAllAgencies: () => api.get("/host/admin/agencies"),
-  getAllHosts: () => api.get("/host/admin/users"),
+  getStats: () => api.get("/admin/stats"),
+  getAllHosts: () => api.get("/admin/hosts"),
+  searchHosts: (query) => api.get(`/admin/hosts?search=${query}`),
+  getHostDetails: (hostId) => api.get(`/admin/hosts/${hostId}`),
+  approveKYC: (hostId) => api.post(`/admin/hosts/${hostId}/approve-kyc`),
+  rejectKYC: (hostId, reason) =>
+    api.post(`/admin/hosts/${hostId}/reject-kyc`, { reason }),
+  deleteHost: (hostId) => api.delete(`/admin/hosts/${hostId}`),
 };
 
 // ==================== UPLOAD HELPER ====================
