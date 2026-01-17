@@ -64,7 +64,7 @@ const Login = () => {
     } catch (err) {
       console.error("Login error:", err);
       setError(
-        err.response?.data?.message || "Network error. Please try again."
+        err.response?.data?.message || "Network error. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -78,6 +78,14 @@ const Login = () => {
     >
       {/* Glass Card */}
       <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
+        {/* Logo Section */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="public/logo-left.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-28 h-28 object-contain"
+          />
+        </div>
         <h1 className="text-4xl font-bold text-center mb-6 text-gray-800">
           Host Login
         </h1>

@@ -1,3 +1,4 @@
+// utils/twilioService.js
 const twilio = require("twilio");
 
 // Load environment variables
@@ -63,7 +64,7 @@ const formatPhoneNumber = (phone) => {
  */
 exports.sendOtpSms = async (phone, otp) => {
   if (!client) {
-    console.log("📵 Twilio not configured. OTP (DEV MODE):", otp);
+    console.log("🔵 Twilio not configured. OTP (DEV MODE):", otp);
     return true; // Allow development without Twilio
   }
 
@@ -72,7 +73,7 @@ exports.sendOtpSms = async (phone, otp) => {
     console.log(`📱 Sending OTP to: ${formattedPhone}`);
 
     const message = await client.messages.create({
-      body: `Your Dating App verification code is: ${otp}. Valid for 5 minutes. Do not share this code.`,
+      body: `Your Dating App verification code is: ${otp}. Valid for 10 minutes. Do not share this code.`,
       from: twilioPhoneNumber,
       to: formattedPhone,
     });
@@ -95,7 +96,7 @@ exports.sendOtpSms = async (phone, otp) => {
  */
 exports.sendPasswordResetOtp = async (phone, otp) => {
   if (!client) {
-    console.log("📵 Twilio not configured. Reset OTP (DEV MODE):", otp);
+    console.log("🔵 Twilio not configured. Reset OTP (DEV MODE):", otp);
     return true;
   }
 
@@ -104,7 +105,7 @@ exports.sendPasswordResetOtp = async (phone, otp) => {
     console.log(`📱 Sending Password Reset OTP to: ${formattedPhone}`);
 
     const message = await client.messages.create({
-      body: `Your Dating App password reset code is: ${otp}. Valid for 5 minutes. If you didn't request this, please ignore.`,
+      body: `Your Dating App password reset code is: ${otp}. Valid for 10 minutes. If you didn't request this, please ignore.`,
       from: twilioPhoneNumber,
       to: formattedPhone,
     });

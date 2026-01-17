@@ -2345,7 +2345,7 @@ async function createInitialAdmin() {
   try {
     const adminExists = await Admin.findOne({ username: "superadmin" });
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash("Admin@12345", 10);
+      const hashedPassword = await bcrypt.hash("Miraj@12345", 10);
       await Admin.create({
         username: "superadmin",
         password: hashedPassword,
@@ -2355,7 +2355,7 @@ async function createInitialAdmin() {
       console.log("   INITIAL ADMIN CREATED");
       console.log("   ================================");
       console.log("   Username: superadmin");
-      console.log("   Password: Admin@12345");
+      console.log("   Password: Miraj@12345");
       console.log("   ⚠️  CHANGE PASSWORD IMMEDIATELY!");
       console.log("   ================================\n");
     }

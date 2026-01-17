@@ -1,4 +1,4 @@
-// // src/pages/user/SignUp.jsx
+// src/pages/user/SignUp.jsx
 import { useState } from "react";
 import { userAuthAPI } from "../../api/userAuth";
 
@@ -75,6 +75,16 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
       </button> */}
 
       <div className="w-full max-w-md">
+        {/* Logo Section */}
+        <div className="flex justify-center mb-8">
+          <img
+            src="/logo.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-36 h-36 object-contain"
+          />
+        </div>
+
+        {/* Title & Subtitle */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             Create Account
@@ -82,13 +92,16 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
           <p className="text-gray-500">Sign up to find your date</p>
         </div>
 
+        {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             {error}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name Inputs */}
           <div className="grid grid-cols-2 gap-3">
             <input
               type="text"
@@ -110,6 +123,7 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
             />
           </div>
 
+          {/* Phone Input */}
           <input
             type="tel"
             name="phone"
@@ -154,6 +168,7 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
             </label>
           </div>
 
+          {/* Password Inputs */}
           <input
             type="password"
             name="password"
@@ -174,6 +189,7 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
             className="w-full px-4 py-3 bg-white border-2 border-pink-200 rounded-2xl focus:outline-none focus:border-pink-400 transition-colors placeholder-gray-400"
           />
 
+          {/* Sign Up Button */}
           <button
             type="submit"
             disabled={loading}
@@ -183,7 +199,9 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
           </button>
         </form>
 
+        {/* Login Link */}
         <p className="text-center mt-6 text-gray-600">
+          Already have an account?{" "}
           <button
             onClick={onNavigateToLogin}
             className="text-pink-500 hover:text-pink-600 font-medium"
@@ -191,8 +209,13 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
             Sign In
           </button>
         </p>
+
+        {/* Footer */}
+        <div className="bg-white px-6 py-4 text-center text-xs text-gray-600 space-y-1">
+          <p>© 2026 Biswa Bangla Social Networking Services Club.</p>
+          <p>All rights reserved.</p>
+        </div>
       </div>
     </div>
   );
 }
-// export default App;

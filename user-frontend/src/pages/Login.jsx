@@ -1,7 +1,7 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
-// API Configuration
 const API_URL = "http://localhost:3000/api/admin";
 
 const AdminLogin = ({ onLoginSuccess }) => {
@@ -39,11 +39,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
       const data = await response.json();
 
       if (data.success) {
-        // Store token in localStorage
         localStorage.setItem("adminToken", data.data.token);
         localStorage.setItem("adminData", JSON.stringify(data.data.admin));
-
-        // Call the callback to update parent state
         onLoginSuccess();
       } else {
         setError(data.message || "Login failed");
@@ -58,9 +55,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-pink-600">
-      {/* Animated background elements */}
       <div className="absolute inset-0">
-        {/* Stars */}
         {[...Array(50)].map((_, i) => (
           <div
             key={i}
@@ -76,10 +71,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
           />
         ))}
 
-        {/* Planet */}
         <div className="absolute top-12 right-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 opacity-80 blur-sm" />
 
-        {/* Mountains */}
         <div className="absolute bottom-0 left-0 right-0 h-64">
           <svg viewBox="0 0 1200 300" className="w-full h-full">
             <defs>
@@ -104,13 +97,19 @@ const AdminLogin = ({ onLoginSuccess }) => {
         </div>
       </div>
 
-      {/* Login Card */}
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
         <div className="w-full max-w-md">
-          {/* Glass morphism card */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+            <div className="flex justify-center mb-8">
+              <img
+                src="/logo.png"
+                alt="Biswa Bangla Social Networking Club"
+                className="w-28 h-28 object-contain drop-shadow-lg"
+              />
+            </div>
+
             <h1 className="text-4xl font-bold text-center text-white mb-8">
-              Admin Login
+              User Admin Login
             </h1>
 
             {error && (
@@ -120,7 +119,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
               <div>
                 <label className="block text-white/90 text-sm font-medium mb-2">
                   Email
@@ -139,7 +137,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
                 </div>
               </div>
 
-              {/* Password Input */}
               <div>
                 <label className="block text-white/90 text-sm font-medium mb-2">
                   Password
@@ -169,7 +166,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
                 </div>
               </div>
 
-              {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center text-white/90 cursor-pointer">
                   <input
@@ -188,7 +184,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
                 </a>
               </div>
 
-              {/* Login Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -198,7 +193,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
               </button>
             </form>
 
-            {/* Register Link */}
             <p className="mt-6 text-center text-white/80 text-sm">
               Don't have an account?{" "}
               <a href="#" className="text-white font-semibold hover:underline">

@@ -1,3 +1,4 @@
+// src/pages/user/ForgotPassword.jsx
 import { useState } from "react";
 import { userAuthAPI } from "../../api/userAuth";
 
@@ -37,7 +38,7 @@ export default function ForgotPassword({
       const response = await userAuthAPI.forgotPassword(
         formData.phone,
         formData.newPassword,
-        formData.confirmPassword
+        formData.confirmPassword,
       );
 
       if (response.success) {
@@ -71,6 +72,16 @@ export default function ForgotPassword({
       </button> */}
 
       <div className="w-full max-w-md">
+        {/* Logo Section */}
+        <div className="flex justify-center mb-8">
+          <img
+            src="/logo.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-32 h-32 object-contain"
+          />
+        </div>
+
+        {/* Title & Subtitle */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             Forgot Password
@@ -78,12 +89,14 @@ export default function ForgotPassword({
           <p className="text-gray-500">Reset your password securely</p>
         </div>
 
+        {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             {error}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="tel"
@@ -115,6 +128,7 @@ export default function ForgotPassword({
             className="w-full px-4 py-3 bg-white border-2 border-pink-200 rounded-2xl focus:outline-none focus:border-pink-400 transition-colors placeholder-gray-400"
           />
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -124,6 +138,7 @@ export default function ForgotPassword({
           </button>
         </form>
 
+        {/* Back to Login Link */}
         <p className="text-center mt-6 text-gray-600">
           <button
             onClick={onBackToLogin}
@@ -132,6 +147,12 @@ export default function ForgotPassword({
             ← Back to Login
           </button>
         </p>
+
+        {/* Footer */}
+        <div className="bg-white px-6 py-4 text-center text-xs text-gray-600 space-y-1">
+          <p>© 2026 Biswa Bangla Social Networking Services Club.</p>
+          <p>All rights reserved.</p>
+        </div>
       </div>
     </div>
   );

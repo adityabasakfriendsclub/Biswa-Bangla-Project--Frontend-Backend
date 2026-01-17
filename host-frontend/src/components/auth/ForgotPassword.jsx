@@ -261,13 +261,21 @@ const ForgotPassword = () => {
       style={{ backgroundImage: `url(${authBg})` }}
     >
       <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
-        <Link
+        {/* Logo Section */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="public/logo-left.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-28 h-28 object-contain"
+          />
+        </div>
+        {/* <Link
           to="/login"
           className="flex items-center gap-2 mb-4 text-gray-700 hover:opacity-70"
         >
           <ArrowLeft className="w-6 h-6" />
           <span>Back to Login</span>
-        </Link>
+        </Link> */}
 
         <h1 className="text-4xl font-bold text-center text-gray-700 mb-2">
           Forgot Password

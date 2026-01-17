@@ -1,4 +1,4 @@
-// // // src/pages/user/VerifyOTP.jsx
+// src/pages/user/VerifyOTP.jsx
 import { useState, useRef, useEffect } from "react";
 import { userAuthAPI } from "../../api/userAuth";
 
@@ -70,7 +70,7 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
 
         if (errorMessage.toLowerCase().includes("expired")) {
           setError(
-            "⏱️ OTP has expired. Click 'Resend OTP' below to get a new code."
+            "⏱️ OTP has expired. Click 'Resend OTP' below to get a new code.",
           );
         } else if (
           errorMessage.toLowerCase().includes("invalid") ||
@@ -79,7 +79,7 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
           setError("❌ Invalid OTP. Please check the code and try again.");
         } else if (errorMessage.toLowerCase().includes("not found")) {
           setError(
-            "❌ No OTP found for this phone number. Please register again."
+            "❌ No OTP found for this phone number. Please register again.",
           );
         } else {
           setError(errorMessage);
@@ -130,18 +130,30 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
       </button>
 
       <div className="w-full max-w-md">
+        {/* Logo Section */}
+        <div className="flex justify-center mb-12">
+          <img
+            src="/logo.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-32 h-32 object-contain"
+          />
+        </div>
+
+        {/* Title & Phone Info */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-3">Verify OTP</h1>
           <p className="text-gray-500">Enter the 6-digit code sent to</p>
           <p className="text-gray-700 font-semibold mt-1">📱 {phone}</p>
         </div>
 
+        {/* Error Message */}
         {error && (
           <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center">
             {error}
           </div>
         )}
 
+        {/* OTP Input Grid */}
         <div className="flex justify-center gap-3 mb-8">
           {otp.map((digit, index) => (
             <input
@@ -157,6 +169,7 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
           ))}
         </div>
 
+        {/* Verify Button */}
         <button
           onClick={handleVerify}
           disabled={loading}
@@ -165,7 +178,7 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
           {loading ? "VERIFYING..." : "VERIFY OTP"}
         </button>
 
-        {/* Resend OTP Button */}
+        {/* Resend OTP Section */}
         <div className="text-center">
           {canResend ? (
             <button
@@ -183,7 +196,7 @@ export default function VerifyOTP({ phone, onVerifySuccess, onExit }) {
           )}
         </div>
 
-        {/* OTP Info */}
+        {/* Footer Info */}
         <div className="mt-6 text-center text-xs text-gray-500">
           <p>⏱️ OTP expires in 10 minutes</p>
           <p className="mt-1">
