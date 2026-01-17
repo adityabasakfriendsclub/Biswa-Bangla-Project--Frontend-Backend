@@ -1,3 +1,4 @@
+// src/components/UserModal.jsx
 export default function UserModal({ user, onClose, onVerify, onDelete }) {
   if (!user) return null;
 

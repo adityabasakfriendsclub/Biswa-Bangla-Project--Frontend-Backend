@@ -1,26 +1,107 @@
-const API_URL = "http://localhost:3000/api/admin";
+// src/services/api.js
 
+// ==================== BASE URL ====================
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+const ADMIN_API_URL = `${API_BASE_URL}/admin`;
+
+// ==================== TOKEN HELPER ====================
+const getToken = () => localStorage.getItem("token");
+
+// ==================== COMMON RESPONSE HANDLER ====================
+const handleResponse = async (res) => {
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "API Error");
+  }
+  return data;
+};
+
+// ==================== USER API ====================
+export const api = {
+  // ---------- GET ----------
+  get: async (endpoint) => {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return handleResponse(res);
+  },
+
+  // ---------- POST ----------
+  post: async (endpoint, data = {}) => {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  // ---------- PUT ----------
+  put: async (endpoint, data = {}) => {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  // ---------- DELETE ----------
+  delete: async (endpoint) => {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return handleResponse(res);
+  },
+};
+
+// ==================== ADMIN API ====================
 export const adminAPI = {
+  // ---------- ADMIN LOGIN ----------
   login: async (credentials) => {
-    const response = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${ADMIN_API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-    return response.json();
+    return handleResponse(res);
   },
 
-  getStats: async (token) => {
-    const response = await fetch(`${API_URL}/stats`, {
-      headers: { Authorization: `Bearer ${token}` },
+  // ---------- DASHBOARD STATS ----------
+  getStats: async () => {
+    const res = await fetch(`${ADMIN_API_URL}/stats`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
-    return response.json();
+    return handleResponse(res);
   },
 
-  getUsers: async (token) => {
-    const response = await fetch(`${API_URL}/users`, {
-      headers: { Authorization: `Bearer ${token}` },
+  // ---------- USERS LIST ----------
+  getUsers: async () => {
+    const res = await fetch(`${ADMIN_API_URL}/users`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
-    return response.json();
+    return handleResponse(res);
   },
 };
+
+// ==================== DEFAULT EXPORT ====================
+export default api;

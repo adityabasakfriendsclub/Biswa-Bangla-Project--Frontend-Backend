@@ -61,7 +61,7 @@ const HostLogin = () => {
           localStorage.setItem("userType", "admin");
           localStorage.setItem(
             "adminData",
-            JSON.stringify(response.data.admin)
+            JSON.stringify(response.data.admin),
           );
 
           alert(`Welcome back, ${response.data.admin.username}!`);
@@ -85,7 +85,7 @@ const HostLogin = () => {
           localStorage.setItem("userType", "agency");
           localStorage.setItem(
             "agencyData",
-            JSON.stringify(response.data.agency)
+            JSON.stringify(response.data.agency),
           );
 
           alert(`Welcome back, ${response.data.agency.agencyName}!`);
@@ -95,7 +95,7 @@ const HostLogin = () => {
     } catch (err) {
       console.error("Login error:", err);
       setError(
-        err.response?.data?.message || "Login failed. Please try again."
+        err.response?.data?.message || "Login failed. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -108,6 +108,15 @@ const HostLogin = () => {
       style={{ backgroundImage: `url(${authBg})` }}
     >
       <div className="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
+        {/* Logo Section */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="public/logo-left.png"
+            alt="Biswa Bangla Social Networking Club"
+            className="w-28 h-28 object-contain"
+          />
+        </div>
+
         {/* Mode Toggle */}
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-2xl">
           <button
@@ -327,26 +336,6 @@ const HostLogin = () => {
             )}
           </button>
         </form>
-
-        {/* Default Credentials (Admin only) */}
-        {/* {loginMode === "admin" && (
-          <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-            <p className="text-xs text-purple-800 font-semibold mb-2">
-              🔐 Default Admin Credentials:
-            </p>
-            <div className="text-xs text-purple-700 space-y-1">
-              <p>
-                <strong>Username:</strong> superadmin
-              </p>
-              <p>
-                <strong>Password:</strong> Admin@12345
-              </p>
-              <p className="text-red-600 font-semibold mt-2">
-                ⚠️ Change password after first login!
-              </p>
-            </div>
-          </div>
-        )} */}
 
         {/* Agency Signup Link */}
         {loginMode === "agency" && (

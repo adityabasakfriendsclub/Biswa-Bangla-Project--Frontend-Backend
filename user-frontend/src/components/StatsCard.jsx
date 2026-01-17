@@ -1,3 +1,4 @@
+// src/components/StatsCard
 export default function StatsCard({ title, value, icon, color, trend }) {
   return (
     <div
