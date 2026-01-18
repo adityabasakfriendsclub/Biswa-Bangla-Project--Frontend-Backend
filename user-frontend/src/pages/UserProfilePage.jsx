@@ -134,15 +134,25 @@ export default function UserProfilePage({ user, onBack, onUpdate }) {
     }
   };
 
+  // const getProfileImageUrl = () => {
+  //   if (profileData.profileImage) {
+  //     return `${API_BASE_URL.replace("/api", "")}${profileData.profileImage}`;
+  //   }
+  //   return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+  //     `${user?.firstName} ${user?.lastName}`
+  //   )}&background=ec4899&color=fff&size=200`;
+  // };
   const getProfileImageUrl = () => {
     if (profileData.profileImage) {
-      return `${API_BASE_URL.replace("/api", "")}${profileData.profileImage}`;
+      return `${window.location.origin}${profileData.profileImage}`;
     }
+
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      `${user?.firstName} ${user?.lastName}`
+      `${user?.firstName} ${user?.lastName}`,
     )}&background=ec4899&color=fff&size=200`;
   };
 
+  // end
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 to-white pb-20">
       {/* Header */}
