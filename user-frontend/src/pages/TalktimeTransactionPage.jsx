@@ -148,7 +148,7 @@ export default function TalktimeTransactionPage({ user, onBack }) {
 
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-white px-6 py-4 text-center text-xs text-gray-600 space-y-1 border-t border-gray-200">
-        <p>© 2025 Biswa Bangla Social Networking Services Club.</p>
+        <p>© 2025 Biswa Bangla Social Networking Club.</p>
         <p>All rights reserved.</p>
       </div>
     </div>
