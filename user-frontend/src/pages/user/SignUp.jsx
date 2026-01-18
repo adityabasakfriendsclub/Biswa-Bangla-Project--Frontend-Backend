@@ -212,7 +212,7 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
 
         {/* Footer */}
         <div className="bg-white px-6 py-4 text-center text-xs text-gray-600 space-y-1">
-          <p>© 2026 Biswa Bangla Social Networking Services Club.</p>
+          <p>© 2026 Biswa Bangla Social Networking Club.</p>
           <p>All rights reserved.</p>
         </div>
       </div>

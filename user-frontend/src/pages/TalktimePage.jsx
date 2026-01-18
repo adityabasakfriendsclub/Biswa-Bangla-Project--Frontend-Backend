@@ -574,9 +574,7 @@ export default function TalktimePage({ user, onBack, onBalanceUpdate }) {
       {/* Footer Info */}
       <div className="fixed bottom-0 left-0 right-0 bg-white px-6 py-4 text-center text-xs text-gray-600 border-t border-gray-200">
         <p>🔒 Secured by Razorpay (DEMO MODE) • Talktime added instantly</p>
-        <p className="mt-1">
-          © 2026 Biswa Bangla Social Networking Services Club.
-        </p>
+        <p className="mt-1">© 2026 Biswa Bangla Social Networking Club.</p>
       </div>
     </div>
   );
