@@ -5,7 +5,8 @@ const path = require("path");
 const fs = require("fs");
 
 // ✅ Create uploads directory if it doesn't exist
-const uploadsDir = "uploads/reports";
+// const uploadsDir = "uploads/reports";
+const uploadsDir = "/var/www/uploads/reports";
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -25,7 +26,7 @@ const fileFilter = (req, file, cb) => {
   // Accept images, PDFs, and videos
   const allowedTypes = /jpeg|jpg|png|gif|pdf|mp4|mpeg/;
   const extname = allowedTypes.test(
-    path.extname(file.originalname).toLowerCase()
+    path.extname(file.originalname).toLowerCase(),
   );
   const mimetype = allowedTypes.test(file.mimetype);
 
@@ -189,7 +190,7 @@ exports.getReportById = async (req, res) => {
   try {
     const report = await Report.findById(req.params.id).populate(
       "userId",
-      "firstName lastName phone email"
+      "firstName lastName phone email",
     );
 
     if (!report) {

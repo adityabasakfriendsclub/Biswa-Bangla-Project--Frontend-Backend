@@ -1,5 +1,7 @@
-// // src/App.jsx - UPDATED WITH ALL LEGAL PAGE ROUTES
+// // new3
+// // src/App.jsx
 // import React, { useState, useEffect } from "react";
+// import WelcomeSplash from "./components/WelcomeSplash"; // ← NEW IMPORT
 
 // // User Pages
 // import UserLogin from "./pages/user/UserLogin";
@@ -36,6 +38,15 @@
 //   const [callData, setCallData] = useState(null);
 //   const [tempPhone, setTempPhone] = useState("");
 
+//   // 🔥 NEW: Welcome Splash State
+//   const [showSplash, setShowSplash] = useState(true);
+
+//   // Handle splash close
+//   const handleSplashClose = () => {
+//     setShowSplash(false);
+//   };
+
+//   // Check auth on mount
 //   useEffect(() => {
 //     try {
 //       // Check for admin session
@@ -98,7 +109,7 @@
 //       localStorage.setItem("userData", JSON.stringify(userData));
 //       localStorage.setItem(
 //         "token",
-//         userData.token || localStorage.getItem("userToken")
+//         userData.token || localStorage.getItem("userToken"),
 //       );
 
 //       setUser(userData);
@@ -194,7 +205,7 @@
 //     }
 //   };
 
-//   // Admin Mode
+//   // === ADMIN MODE ===
 //   if (mode === "admin") {
 //     if (!admin) {
 //       return <AdminLogin onLoginSuccess={handleAdminLogin} />;
@@ -202,7 +213,12 @@
 //     return <AdminDashboard onLogout={handleAdminLogout} />;
 //   }
 
-//   // User Mode - Auth Pages
+//   // === WELCOME SPLASH: SHOW ON FIRST LOAD ONLY ===
+//   if (showSplash) {
+//     return <WelcomeSplash onClose={handleSplashClose} />;
+//   }
+
+//   // === USER MODE - AUTH PAGES ===
 //   if (!user) {
 //     switch (currentPage) {
 //       case "login":
@@ -365,10 +381,10 @@
 //   }
 // }
 
-// new3
-// src/App.jsx
+//============= new2;
+
 import React, { useState, useEffect } from "react";
-import WelcomeSplash from "./components/WelcomeSplash"; // ← NEW IMPORT
+import WelcomeSplash from "./components/WelcomeSplash";
 
 // User Pages
 import UserLogin from "./pages/user/UserLogin";
@@ -581,10 +597,15 @@ export default function App() {
   }
 
   // === WELCOME SPLASH: SHOW ON FIRST LOAD ONLY ===
+  // if (showSplash) {
+  //   return <WelcomeSplash onClose={handleSplashClose} />;
+  // }
+  // new
   if (showSplash) {
-    return <WelcomeSplash onClose={handleSplashClose} />;
+    return (
+      <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
+    );
   }
-
   // === USER MODE - AUTH PAGES ===
   if (!user) {
     switch (currentPage) {
