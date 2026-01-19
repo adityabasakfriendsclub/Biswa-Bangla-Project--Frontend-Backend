@@ -818,6 +818,7 @@ import ShippingPolicyPage from "./pages/legal/ShippingPolicyPage";
 import CommunityGuidelinesPage from "./pages/legal/CommunityGuidelinesPage";
 import ChildrenMinorsPage from "./pages/legal/ChildrenMinorsPage";
 import ContactUsPage from "./pages/legal/ContactUsPage";
+import UsagePolicyPage from "./pages/legal/UsagePolicyPage";
 
 // Admin Pages
 import AdminLogin from "./pages/Login";
@@ -1075,6 +1076,7 @@ export default function App() {
   const legalPages = [
     "privacy-policy",
     "terms-and-conditions",
+    "usage-policy",
     "shipping-policy",
     "community-guidelines",
     "children-and-minors",
@@ -1088,6 +1090,8 @@ export default function App() {
     };
 
     switch (currentPage) {
+      case "usage-policy":
+        return <UsagePolicyPage onBack={handleBackFromLegal} />;
       case "privacy-policy":
         return <PrivacyPolicyPage onBack={handleBackFromLegal} />;
       case "terms-and-conditions":

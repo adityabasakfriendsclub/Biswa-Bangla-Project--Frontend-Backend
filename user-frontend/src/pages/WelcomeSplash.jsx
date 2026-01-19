@@ -98,7 +98,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               />
             </div>
           </div>
-
           {/* Welcome Text */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-4">
             Welcome To The Family Of
@@ -107,19 +106,16 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               Biswa Bangla Social Networking Club
             </span>
           </h1>
-
           {/* Divider */}
           <div className="flex items-center justify-center gap-3 sm:gap-4 my-6 sm:my-8">
             <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-cyan-500"></div>
             <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
             <div className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-cyan-500"></div>
           </div>
-
           {/* Certification Text */}
           <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-10 md:mb-12 font-light px-4">
             Certified by State Government and Central Government
           </p>
-
           {/* Government Logos */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 md:gap-16 lg:gap-20 mb-8">
             {/* State Government Logo */}
@@ -163,7 +159,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               </p>
             </div>
           </div>
-
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-8">
             <button
@@ -212,7 +207,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
             </button>
           </div>
-
           {/* About Section - Collapsible */}
           {showAbout && (
             <div className="mb-10 animate-fadeIn">
@@ -353,7 +347,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               </div>
             </div>
           )}
-
           {/* Policies & Legal Section - Collapsible */}
           {showPolicy && (
             <div className="mb-10 animate-fadeIn">
@@ -367,14 +360,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
 
                 <ul className="space-y-3 text-gray-300">
                   <li>
-                    {/* <button
-                      onClick={() => handleNavigateToPage("privacy-policy")}
-                      className="w-full text-left block p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-gray-700 hover:border-gray-500 transition-all duration-300 text-sm sm:text-base font-medium text-cyan-300 hover:text-cyan-100"
-                      aria-label="View Privacy Policy"
-                    >
-                      🔐 Privacy Policy
-                    </button> */}
-                    {/* start */}
                     <button
                       onClick={() => handleNavigateToPage("privacy-policy")}
                       className="w-full text-left block p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-gray-700 hover:border-gray-500 transition-all duration-300 text-sm sm:text-base font-medium text-cyan-300 hover:text-cyan-100"
@@ -429,6 +414,15 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
                   </li>
                   <li>
                     <button
+                      onClick={() => handleNavigateToPage("usage-policy")}
+                      className="w-full text-left block p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-gray-700 hover:border-gray-500 transition-all duration-300 text-sm sm:text-base font-medium text-indigo-300 hover:text-indigo-100"
+                      aria-label="View Usage Policy"
+                    >
+                      📋 Usage Policy
+                    </button>
+                  </li>
+                  <li>
+                    <button
                       onClick={() => handleNavigateToPage("contact-us")}
                       className="w-full text-left block p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-gray-700 hover:border-gray-500 transition-all duration-300 text-sm sm:text-base font-medium text-emerald-300 hover:text-emerald-100"
                       aria-label="Contact Us"
@@ -448,7 +442,7 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               </div>
             </div>
           )}
-
+          div
           {/* start */}
           {/* 📜 CERTIFICATES SECTION */}
           <div className="flex flex-col lg:flex-row gap-6 mt-10 mb-10 px-4">
@@ -632,7 +626,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               </div>
             </div>
           </div>
-
           {/* 🔐 GST CERTIFICATE MODAL */}
           {gstModalOpen && (
             <div
@@ -772,9 +765,7 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               </div>
             </div>
           )}
-
           {/* end */}
-
           {/* Enter Button */}
           <button
             onClick={handleClose}
@@ -798,7 +789,6 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
             </span>
             <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
           </button>
-
           {/* Bottom Badge */}
           <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
