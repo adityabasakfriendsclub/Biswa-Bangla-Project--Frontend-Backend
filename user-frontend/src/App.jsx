@@ -1025,12 +1025,52 @@ export default function App() {
   }
 
   // === WELCOME SPLASH ===
-  if (showSplash) {
-    return (
-      <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
-    );
-  }
+  // if (showSplash) {
+  //   return (
+  //     <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
+  //   );
+  // }
 
+  // // ✅ LEGAL PAGES (Available WITHOUT login - from WelcomeSplash OR Settings)
+  // const legalPages = [
+  //   "privacy-policy",
+  //   "terms-and-conditions",
+  //   "shipping-policy",
+  //   "community-guidelines",
+  //   "children-and-minors",
+  //   "contact-us",
+  // ];
+
+  // if (legalPages.includes(currentPage)) {
+  //   // Determine back navigation: if user is logged in, go to settings; otherwise go to home
+  //   const backDestination = user ? "settings" : "home";
+
+  //   switch (currentPage) {
+  //     case "privacy-policy":
+  //       return <PrivacyPolicyPage onBack={() => navigateTo(backDestination)} />;
+  //     case "terms-and-conditions":
+  //       return (
+  //         <TermsConditionsPage onBack={() => navigateTo(backDestination)} />
+  //       );
+  //     case "shipping-policy":
+  //       return (
+  //         <ShippingPolicyPage onBack={() => navigateTo(backDestination)} />
+  //       );
+  //     case "community-guidelines":
+  //       return (
+  //         <CommunityGuidelinesPage onBack={() => navigateTo(backDestination)} />
+  //       );
+  //     case "children-and-minors":
+  //       return (
+  //         <ChildrenMinorsPage onBack={() => navigateTo(backDestination)} />
+  //       );
+  //     case "contact-us":
+  //       return <ContactUsPage onBack={() => navigateTo(backDestination)} />;
+  //     default:
+  //       break;
+  //   }
+  // }
+  // new
   // ✅ LEGAL PAGES (Available WITHOUT login - from WelcomeSplash OR Settings)
   const legalPages = [
     "privacy-policy",
@@ -1042,35 +1082,37 @@ export default function App() {
   ];
 
   if (legalPages.includes(currentPage)) {
-    // Determine back navigation: if user is logged in, go to settings; otherwise go to home
-    const backDestination = user ? "settings" : "home";
+    // ✅ When back is clicked, return to WelcomeSplash directly
+    const handleBackFromLegal = () => {
+      setCurrentPage("welcome"); // Navigate back to welcome page
+    };
 
     switch (currentPage) {
       case "privacy-policy":
-        return <PrivacyPolicyPage onBack={() => navigateTo(backDestination)} />;
+        return <PrivacyPolicyPage onBack={handleBackFromLegal} />;
       case "terms-and-conditions":
-        return (
-          <TermsConditionsPage onBack={() => navigateTo(backDestination)} />
-        );
+        return <TermsConditionsPage onBack={handleBackFromLegal} />;
       case "shipping-policy":
-        return (
-          <ShippingPolicyPage onBack={() => navigateTo(backDestination)} />
-        );
+        return <ShippingPolicyPage onBack={handleBackFromLegal} />;
       case "community-guidelines":
-        return (
-          <CommunityGuidelinesPage onBack={() => navigateTo(backDestination)} />
-        );
+        return <CommunityGuidelinesPage onBack={handleBackFromLegal} />;
       case "children-and-minors":
-        return (
-          <ChildrenMinorsPage onBack={() => navigateTo(backDestination)} />
-        );
+        return <ChildrenMinorsPage onBack={handleBackFromLegal} />;
       case "contact-us":
-        return <ContactUsPage onBack={() => navigateTo(backDestination)} />;
+        return <ContactUsPage onBack={handleBackFromLegal} />;
       default:
         break;
     }
   }
 
+  // === WELCOME SPLASH ===
+  if (showSplash || currentPage === "welcome") {
+    return (
+      <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
+    );
+  }
+
+  // end
   // === AUTH PAGES (For non-logged-in users) ===
   if (!user) {
     switch (currentPage) {

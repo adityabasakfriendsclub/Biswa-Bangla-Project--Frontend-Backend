@@ -806,6 +806,10 @@ export default function WelcomeSplash({ onClose, onNavigate }) {
               Verified & Certified Platform
             </p>
           </div>
+          <div className=" px-6 py-4 text-center text-xm text-gray-600 space-y-1">
+            <p>© 2026 Biswa Bangla Social Networking Club.</p>
+            <p>All rights reserved.</p>
+          </div>
         </div>
       </div>
 
