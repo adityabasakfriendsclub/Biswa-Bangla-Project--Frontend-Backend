@@ -1,4 +1,4 @@
-// src/components/WelcomeSplash.jsx
+// src/pages/WelcomeSplash.jsx
 import { useState } from "react";
 
 export default function WelcomeSplash({ onClose, onNavigate }) {

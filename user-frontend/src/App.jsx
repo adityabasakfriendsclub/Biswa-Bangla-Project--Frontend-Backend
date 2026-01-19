@@ -1,7 +1,7 @@
-// // new3
-// // src/App.jsx
+// //============= new2;
+
 // import React, { useState, useEffect } from "react";
-// import WelcomeSplash from "./components/WelcomeSplash"; // ← NEW IMPORT
+// import WelcomeSplash from "./components/WelcomeSplash";
 
 // // User Pages
 // import UserLogin from "./pages/user/UserLogin";
@@ -214,10 +214,15 @@
 //   }
 
 //   // === WELCOME SPLASH: SHOW ON FIRST LOAD ONLY ===
+//   // if (showSplash) {
+//   //   return <WelcomeSplash onClose={handleSplashClose} />;
+//   // }
+//   // new
 //   if (showSplash) {
-//     return <WelcomeSplash onClose={handleSplashClose} />;
+//     return (
+//       <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
+//     );
 //   }
-
 //   // === USER MODE - AUTH PAGES ===
 //   if (!user) {
 //     switch (currentPage) {
@@ -380,11 +385,416 @@
 //       );
 //   }
 // }
+// 2= skip login page
 
-//============= new2;
+// import React, { useState, useEffect } from "react";
+// import WelcomeSplash from "./pages/WelcomeSplash";
 
+// // User Pages
+// import UserLogin from "./pages/user/UserLogin";
+// import SignUp from "./pages/user/SignUp";
+// import VerifyOTP from "./pages/user/VerifyOTP";
+// import ForgotPassword from "./pages/user/ForgotPassword";
+// import VerifyResetOTP from "./pages/user/VerifyResetOTP";
+// import HomePage from "./pages/HomePage";
+// import VideoCallPage from "./pages/VideoCallPage";
+// import AccountPage from "./pages/AccountPage";
+// import UserProfilePage from "./pages/UserProfilePage";
+// import TalktimePage from "./pages/TalktimePage";
+// import TalktimeTransactionPage from "./pages/TalktimeTransactionPage";
+// import GrievanceFormPage from "./pages/GrievanceFormPage";
+// import SettingsPage from "./pages/SettingsPage";
+
+// // ✅ Legal Pages
+// import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
+// import TermsConditionsPage from "./pages/legal/TermsConditionsPage";
+// import ShippingPolicyPage from "./pages/legal/ShippingPolicyPage";
+// import CommunityGuidelinesPage from "./pages/legal/CommunityGuidelinesPage";
+// import ChildrenMinorsPage from "./pages/legal/ChildrenMinorsPage";
+// import ContactUsPage from "./pages/legal/ContactUsPage";
+
+// // Admin Pages
+// import AdminLogin from "./pages/Login";
+// import AdminDashboard from "./pages/Dashboard";
+
+// export default function App() {
+//   const [mode, setMode] = useState("user");
+//   const [currentPage, setCurrentPage] = useState("login");
+//   const [user, setUser] = useState(null);
+//   const [admin, setAdmin] = useState(null);
+//   const [callData, setCallData] = useState(null);
+//   const [tempPhone, setTempPhone] = useState("");
+
+//   // 🔥 UPDATED: Welcome Splash State
+//   const [showSplash, setShowSplash] = useState(true);
+//   const [isInitializing, setIsInitializing] = useState(true);
+
+//   // Check auth on mount
+//   useEffect(() => {
+//     const initializeApp = async () => {
+//       try {
+//         // Check for admin session
+//         const adminToken = localStorage.getItem("adminToken");
+//         const adminData = localStorage.getItem("adminData");
+
+//         if (adminToken && adminData) {
+//           const parsedAdmin = JSON.parse(adminData);
+//           setAdmin(parsedAdmin);
+//           setMode("admin");
+//           setCurrentPage("dashboard");
+//           setShowSplash(false); // Skip splash for admin
+//           setIsInitializing(false);
+//           return;
+//         }
+
+//         // Check for user session
+//         const userToken =
+//           localStorage.getItem("token") || localStorage.getItem("userToken");
+//         const userData = localStorage.getItem("userData");
+
+//         if (
+//           userToken &&
+//           userData &&
+//           userData !== "undefined" &&
+//           userData !== "null"
+//         ) {
+//           try {
+//             const parsedUser = JSON.parse(userData);
+//             console.log("✅ Loaded user from localStorage:", parsedUser);
+//             setUser(parsedUser);
+//             setCurrentPage("home"); // Will show after splash
+//           } catch (parseError) {
+//             console.error("❌ Error parsing userData:", parseError);
+//             localStorage.clear();
+//             setCurrentPage("login"); // Will show after splash
+//           }
+//         } else {
+//           localStorage.removeItem("userData");
+//           localStorage.removeItem("token");
+//           localStorage.removeItem("userToken");
+//           setCurrentPage("login"); // Will show after splash
+//         }
+//       } catch (err) {
+//         console.error("Error initializing app state:", err);
+//         localStorage.clear();
+//         setCurrentPage("login");
+//       } finally {
+//         setIsInitializing(false);
+//       }
+//     };
+
+//     initializeApp();
+//   }, []);
+
+//   // Handle splash close
+//   const handleSplashClose = () => {
+//     setShowSplash(false);
+//     // After splash closes, user will see either:
+//     // - login page (if not logged in)
+//     // - home page (if already logged in)
+//   };
+
+//   // User Auth Handlers
+//   const handleUserLogin = (userData) => {
+//     try {
+//       console.log("🔐 Login handler received:", userData);
+
+//       if (!userData || typeof userData !== "object") {
+//         console.error("Invalid user data");
+//         alert("❌ Invalid login data");
+//         return;
+//       }
+
+//       localStorage.setItem("userData", JSON.stringify(userData));
+//       localStorage.setItem(
+//         "token",
+//         userData.token || localStorage.getItem("userToken"),
+//       );
+
+//       setUser(userData);
+//       setCurrentPage("home");
+
+//       console.log("✅ User logged in successfully:", userData);
+//     } catch (err) {
+//       console.error("Login error:", err);
+//       alert("Failed to save login data");
+//     }
+//   };
+
+//   const handleSignUpSuccess = (phone) => {
+//     setTempPhone(phone);
+//     setCurrentPage("verifyOTP");
+//   };
+
+//   const handleOTPVerified = () => {
+//     setCurrentPage("login");
+//     alert("✅ Account verified! Please login.");
+//   };
+
+//   const handleForgotPasswordSubmit = (phone) => {
+//     setTempPhone(phone);
+//     setCurrentPage("verifyResetOTP");
+//   };
+
+//   const handleResetOTPVerified = () => {
+//     setCurrentPage("login");
+//   };
+
+//   const handleUserLogout = () => {
+//     localStorage.removeItem("userData");
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("userToken");
+//     setUser(null);
+//     setCurrentPage("login");
+//   };
+
+//   // Admin Auth Handlers
+//   const handleAdminLogin = () => {
+//     try {
+//       const adminToken = localStorage.getItem("adminToken");
+//       const adminData = localStorage.getItem("adminData");
+
+//       if (adminToken && adminData) {
+//         const parsedAdmin = JSON.parse(adminData);
+//         setAdmin(parsedAdmin);
+//         setMode("admin");
+//         setCurrentPage("dashboard");
+//       }
+//     } catch (err) {
+//       console.error("Admin login error:", err);
+//     }
+//   };
+
+//   const handleAdminLogout = () => {
+//     localStorage.removeItem("adminToken");
+//     localStorage.removeItem("adminData");
+//     setAdmin(null);
+//     setMode("user");
+//     setCurrentPage("login");
+//   };
+
+//   // Video Call Handlers
+//   const handleStartCall = (data) => {
+//     setCallData(data);
+//     setCurrentPage("videoCall");
+//   };
+
+//   const handleEndCall = () => {
+//     setCallData(null);
+//     setCurrentPage("home");
+//   };
+
+//   // Navigation
+//   const navigateTo = (page) => {
+//     setCurrentPage(page);
+//   };
+
+//   // Handle user profile update
+//   const handleUserUpdate = (updatedUser) => {
+//     const newUserData = { ...user, ...updatedUser };
+//     setUser(newUserData);
+//     localStorage.setItem("userData", JSON.stringify(newUserData));
+//   };
+
+//   const handleBalanceUpdate = (newBalance) => {
+//     if (user) {
+//       const updatedUser = { ...user, walletBalance: newBalance };
+//       setUser(updatedUser);
+//       localStorage.setItem("userData", JSON.stringify(updatedUser));
+//     }
+//   };
+
+//   // === SHOW LOADING WHILE INITIALIZING ===
+//   if (isInitializing) {
+//     return (
+//       <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
+//         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-pink-500"></div>
+//       </div>
+//     );
+//   }
+
+//   // === ADMIN MODE ===
+//   if (mode === "admin") {
+//     if (!admin) {
+//       return <AdminLogin onLoginSuccess={handleAdminLogin} />;
+//     }
+//     return <AdminDashboard onLogout={handleAdminLogout} />;
+//   }
+
+//   // === WELCOME SPLASH: SHOW FIRST (for both logged in and logged out users) ===
+//   if (showSplash) {
+//     return (
+//       <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
+//     );
+//   }
+
+//   // === USER MODE - AUTH PAGES (Shown after splash if not logged in) ===
+//   if (!user) {
+//     switch (currentPage) {
+//       case "login":
+//         return (
+//           <UserLogin
+//             onLoginSuccess={handleUserLogin}
+//             onNavigateToSignUp={() => navigateTo("signup")}
+//             onNavigateToForgotPassword={() => navigateTo("forgotPassword")}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+
+//       case "signup":
+//         return (
+//           <SignUp
+//             onSignUpSuccess={handleSignUpSuccess}
+//             onNavigateToLogin={() => navigateTo("login")}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+
+//       case "verifyOTP":
+//         return (
+//           <VerifyOTP
+//             phone={tempPhone}
+//             onVerifySuccess={handleOTPVerified}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+
+//       case "forgotPassword":
+//         return (
+//           <ForgotPassword
+//             onBackToLogin={() => navigateTo("login")}
+//             onNavigateToVerifyReset={handleForgotPasswordSubmit}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+
+//       case "verifyResetOTP":
+//         return (
+//           <VerifyResetOTP
+//             phone={tempPhone}
+//             onVerifySuccess={handleResetOTPVerified}
+//             onBackToForgot={() => navigateTo("forgotPassword")}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+
+//       default:
+//         return (
+//           <UserLogin
+//             onLoginSuccess={handleUserLogin}
+//             onNavigateToSignUp={() => navigateTo("signup")}
+//             onNavigateToForgotPassword={() => navigateTo("forgotPassword")}
+//             onExit={() => setMode("admin")}
+//           />
+//         );
+//     }
+//   }
+
+//   // === LOGGED IN USER PAGES (Shown after splash if logged in) ===
+//   switch (currentPage) {
+//     // Legal Pages
+//     case "privacy-policy":
+//       return <PrivacyPolicyPage onBack={() => navigateTo("settings")} />;
+
+//     case "terms-and-conditions":
+//       return <TermsConditionsPage onBack={() => navigateTo("settings")} />;
+
+//     case "shipping-policy":
+//       return <ShippingPolicyPage onBack={() => navigateTo("settings")} />;
+
+//     case "community-guidelines":
+//       return <CommunityGuidelinesPage onBack={() => navigateTo("settings")} />;
+
+//     case "children-and-minors":
+//       return <ChildrenMinorsPage onBack={() => navigateTo("settings")} />;
+
+//     case "contact-us":
+//       return <ContactUsPage onBack={() => navigateTo("settings")} />;
+
+//     // Main App Pages
+//     case "home":
+//       return (
+//         <HomePage
+//           user={user}
+//           onStartCall={handleStartCall}
+//           onNavigate={navigateTo}
+//           onLogout={handleUserLogout}
+//         />
+//       );
+
+//     case "videoCall":
+//       return (
+//         <VideoCallPage
+//           user={user}
+//           callData={callData}
+//           onEndCall={handleEndCall}
+//         />
+//       );
+
+//     case "account":
+//       return (
+//         <AccountPage
+//           user={user}
+//           onNavigate={navigateTo}
+//           onLogout={handleUserLogout}
+//         />
+//       );
+
+//     case "profile":
+//       return (
+//         <UserProfilePage
+//           user={user}
+//           onBack={() => navigateTo("account")}
+//           onUpdate={handleUserUpdate}
+//         />
+//       );
+
+//     case "talktime":
+//       return (
+//         <TalktimePage
+//           user={user}
+//           onBack={() => navigateTo("account")}
+//           onBalanceUpdate={handleBalanceUpdate}
+//         />
+//       );
+
+//     case "transaction":
+//       return (
+//         <TalktimeTransactionPage
+//           user={user}
+//           onBack={() => navigateTo("account")}
+//         />
+//       );
+
+//     case "report":
+//       return (
+//         <GrievanceFormPage user={user} onBack={() => navigateTo("account")} />
+//       );
+
+//     case "settings":
+//       return (
+//         <SettingsPage
+//           onBack={() => navigateTo("account")}
+//           onDeleteAccount={handleUserLogout}
+//           onNavigate={navigateTo}
+//         />
+//       );
+
+//     default:
+//       return (
+//         <HomePage
+//           user={user}
+//           onStartCall={handleStartCall}
+//           onNavigate={navigateTo}
+//           onLogout={handleUserLogout}
+//         />
+//       );
+//   }
+// }
+
+//========== new3
 import React, { useState, useEffect } from "react";
-import WelcomeSplash from "./components/WelcomeSplash";
+import WelcomeSplash from "./pages/WelcomeSplash";
 
 // User Pages
 import UserLogin from "./pages/user/UserLogin";
@@ -401,7 +811,7 @@ import TalktimeTransactionPage from "./pages/TalktimeTransactionPage";
 import GrievanceFormPage from "./pages/GrievanceFormPage";
 import SettingsPage from "./pages/SettingsPage";
 
-// ✅ Legal Pages
+// ✅ Legal Pages (Accessible WITHOUT login)
 import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
 import TermsConditionsPage from "./pages/legal/TermsConditionsPage";
 import ShippingPolicyPage from "./pages/legal/ShippingPolicyPage";
@@ -415,68 +825,77 @@ import AdminDashboard from "./pages/Dashboard";
 
 export default function App() {
   const [mode, setMode] = useState("user");
-  const [currentPage, setCurrentPage] = useState("login");
+  const [currentPage, setCurrentPage] = useState("home");
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
   const [callData, setCallData] = useState(null);
   const [tempPhone, setTempPhone] = useState("");
 
-  // 🔥 NEW: Welcome Splash State
+  // 🔥 Welcome Splash State
   const [showSplash, setShowSplash] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // Check auth on mount
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Check for admin session
+        const adminToken = localStorage.getItem("adminToken");
+        const adminData = localStorage.getItem("adminData");
+
+        if (adminToken && adminData) {
+          const parsedAdmin = JSON.parse(adminData);
+          setAdmin(parsedAdmin);
+          setMode("admin");
+          setCurrentPage("dashboard");
+          setShowSplash(false);
+          setIsInitializing(false);
+          return;
+        }
+
+        // Check for user session
+        const userToken =
+          localStorage.getItem("token") || localStorage.getItem("userToken");
+        const userData = localStorage.getItem("userData");
+
+        if (
+          userToken &&
+          userData &&
+          userData !== "undefined" &&
+          userData !== "null"
+        ) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            console.log("✅ Loaded user from localStorage:", parsedUser);
+            setUser(parsedUser);
+            setCurrentPage("home");
+          } catch (parseError) {
+            console.error("❌ Error parsing userData:", parseError);
+            localStorage.clear();
+            setCurrentPage("home"); // Show home as guest
+          }
+        } else {
+          localStorage.removeItem("userData");
+          localStorage.removeItem("token");
+          localStorage.removeItem("userToken");
+          setCurrentPage("home"); // Show home as guest
+        }
+      } catch (err) {
+        console.error("Error initializing app state:", err);
+        localStorage.clear();
+        setCurrentPage("home");
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initializeApp();
+  }, []);
 
   // Handle splash close
   const handleSplashClose = () => {
     setShowSplash(false);
   };
-
-  // Check auth on mount
-  useEffect(() => {
-    try {
-      // Check for admin session
-      const adminToken = localStorage.getItem("adminToken");
-      const adminData = localStorage.getItem("adminData");
-
-      if (adminToken && adminData) {
-        const parsedAdmin = JSON.parse(adminData);
-        setAdmin(parsedAdmin);
-        setMode("admin");
-        setCurrentPage("dashboard");
-        return;
-      }
-
-      // Check for user session
-      const userToken =
-        localStorage.getItem("token") || localStorage.getItem("userToken");
-      const userData = localStorage.getItem("userData");
-
-      if (
-        userToken &&
-        userData &&
-        userData !== "undefined" &&
-        userData !== "null"
-      ) {
-        try {
-          const parsedUser = JSON.parse(userData);
-          console.log("✅ Loaded user from localStorage:", parsedUser);
-          setUser(parsedUser);
-          setCurrentPage("home");
-        } catch (parseError) {
-          console.error("❌ Error parsing userData:", parseError);
-          localStorage.clear();
-          setCurrentPage("login");
-        }
-      } else {
-        localStorage.removeItem("userData");
-        localStorage.removeItem("token");
-        localStorage.removeItem("userToken");
-        setCurrentPage("login");
-      }
-    } catch (err) {
-      console.error("Error initializing app state:", err);
-      localStorage.clear();
-      setCurrentPage("login");
-    }
-  }, []);
 
   // User Auth Handlers
   const handleUserLogin = (userData) => {
@@ -529,7 +948,7 @@ export default function App() {
     localStorage.removeItem("token");
     localStorage.removeItem("userToken");
     setUser(null);
-    setCurrentPage("login");
+    setCurrentPage("home"); // Return to home as guest
   };
 
   // Admin Auth Handlers
@@ -554,7 +973,7 @@ export default function App() {
     localStorage.removeItem("adminData");
     setAdmin(null);
     setMode("user");
-    setCurrentPage("login");
+    setCurrentPage("home");
   };
 
   // Video Call Handlers
@@ -588,6 +1007,15 @@ export default function App() {
     }
   };
 
+  // === LOADING STATE ===
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-pink-500"></div>
+      </div>
+    );
+  }
+
   // === ADMIN MODE ===
   if (mode === "admin") {
     if (!admin) {
@@ -596,17 +1024,54 @@ export default function App() {
     return <AdminDashboard onLogout={handleAdminLogout} />;
   }
 
-  // === WELCOME SPLASH: SHOW ON FIRST LOAD ONLY ===
-  // if (showSplash) {
-  //   return <WelcomeSplash onClose={handleSplashClose} />;
-  // }
-  // new
+  // === WELCOME SPLASH ===
   if (showSplash) {
     return (
       <WelcomeSplash onClose={handleSplashClose} onNavigate={navigateTo} />
     );
   }
-  // === USER MODE - AUTH PAGES ===
+
+  // ✅ LEGAL PAGES (Available WITHOUT login - from WelcomeSplash OR Settings)
+  const legalPages = [
+    "privacy-policy",
+    "terms-and-conditions",
+    "shipping-policy",
+    "community-guidelines",
+    "children-and-minors",
+    "contact-us",
+  ];
+
+  if (legalPages.includes(currentPage)) {
+    // Determine back navigation: if user is logged in, go to settings; otherwise go to home
+    const backDestination = user ? "settings" : "home";
+
+    switch (currentPage) {
+      case "privacy-policy":
+        return <PrivacyPolicyPage onBack={() => navigateTo(backDestination)} />;
+      case "terms-and-conditions":
+        return (
+          <TermsConditionsPage onBack={() => navigateTo(backDestination)} />
+        );
+      case "shipping-policy":
+        return (
+          <ShippingPolicyPage onBack={() => navigateTo(backDestination)} />
+        );
+      case "community-guidelines":
+        return (
+          <CommunityGuidelinesPage onBack={() => navigateTo(backDestination)} />
+        );
+      case "children-and-minors":
+        return (
+          <ChildrenMinorsPage onBack={() => navigateTo(backDestination)} />
+        );
+      case "contact-us":
+        return <ContactUsPage onBack={() => navigateTo(backDestination)} />;
+      default:
+        break;
+    }
+  }
+
+  // === AUTH PAGES (For non-logged-in users) ===
   if (!user) {
     switch (currentPage) {
       case "login":
@@ -656,39 +1121,29 @@ export default function App() {
           />
         );
 
+      // ✅ DEFAULT: Show home page as guest
       default:
         return (
-          <UserLogin
-            onLoginSuccess={handleUserLogin}
-            onNavigateToSignUp={() => navigateTo("signup")}
-            onNavigateToForgotPassword={() => navigateTo("forgotPassword")}
-            onExit={() => setMode("admin")}
+          <HomePage
+            user={null}
+            onStartCall={() => {
+              if (
+                window.confirm(
+                  "⚠️ Please login to start a video call. Login now?",
+                )
+              ) {
+                navigateTo("login");
+              }
+            }}
+            onNavigate={navigateTo}
+            onLogout={() => navigateTo("login")}
           />
         );
     }
   }
 
-  // ✅ LEGAL PAGES ROUTING (Available from Settings)
+  // === LOGGED IN USER PAGES ===
   switch (currentPage) {
-    case "privacy-policy":
-      return <PrivacyPolicyPage onBack={() => navigateTo("settings")} />;
-
-    case "terms-and-conditions":
-      return <TermsConditionsPage onBack={() => navigateTo("settings")} />;
-
-    case "shipping-policy":
-      return <ShippingPolicyPage onBack={() => navigateTo("settings")} />;
-
-    case "community-guidelines":
-      return <CommunityGuidelinesPage onBack={() => navigateTo("settings")} />;
-
-    case "children-and-minors":
-      return <ChildrenMinorsPage onBack={() => navigateTo("settings")} />;
-
-    case "contact-us":
-      return <ContactUsPage onBack={() => navigateTo("settings")} />;
-
-    // Main App Pages
     case "home":
       return (
         <HomePage
@@ -757,14 +1212,16 @@ export default function App() {
         />
       );
 
+    // default:
+    //   return (
+    //     <HomePage
+    //       user={user}
+    //       onStartCall={handleStartCall}
+    //       onNavigate={navigateTo}
+    //       onLogout={handleUserLogout}
+    //     />
+    //   );
     default:
-      return (
-        <HomePage
-          user={user}
-          onStartCall={handleStartCall}
-          onNavigate={navigateTo}
-          onLogout={handleUserLogout}
-        />
-      );
+      return <WelcomeSplash onClose={() => navigateTo("home")} />;
   }
 }
