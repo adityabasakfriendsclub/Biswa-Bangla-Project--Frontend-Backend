@@ -1,11 +1,11 @@
 // src/pages/user/UserLogin.jsx
 import { useState } from "react";
 import { userAuthAPI } from "../../api/userAuth";
-
 export default function UserLogin({
   onLoginSuccess,
   onNavigateToSignUp,
   onNavigateToForgotPassword,
+  onNavigate,
   onExit,
 }) {
   const [formData, setFormData] = useState({
@@ -79,11 +79,13 @@ export default function UserLogin({
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
-          <img
-            src="/logo.png"
-            alt="Biswa Bangla Social Networking Club"
-            className="w-32 h-32 object-contain"
-          />
+          <button onClick={() => onNavigate("welcome")}>
+            <img
+              src="/logo.png"
+              alt="Biswa Bangla Social Networking Club"
+              className="w-32 h-32 object-contain"
+            />
+          </button>
         </div>
 
         {/* Text Section */}

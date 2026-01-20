@@ -5,6 +5,7 @@ import { userAuthAPI } from "../../api/userAuth";
 export default function ForgotPassword({
   onBackToLogin,
   onNavigateToVerifyReset,
+  onNavigate,
   onExit,
 }) {
   const [formData, setFormData] = useState({
@@ -74,11 +75,13 @@ export default function ForgotPassword({
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
-          <img
-            src="/logo.png"
-            alt="Biswa Bangla Social Networking Club"
-            className="w-32 h-32 object-contain"
-          />
+          <button onClick={() => onNavigate("welcome")}>
+            <img
+              src="/logo.png"
+              alt="Biswa Bangla Social Networking Club"
+              className="w-32 h-32 object-contain"
+            />
+          </button>
         </div>
 
         {/* Title & Subtitle */}

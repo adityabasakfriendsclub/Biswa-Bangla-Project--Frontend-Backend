@@ -2,7 +2,12 @@
 import { useState } from "react";
 import { userAuthAPI } from "../../api/userAuth";
 
-export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
+export default function SignUp({
+  onSignUpSuccess,
+  onNavigateToLogin,
+  onNavigate,
+  onExit,
+}) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -77,11 +82,13 @@ export default function SignUp({ onSignUpSuccess, onNavigateToLogin, onExit }) {
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
-          <img
-            src="/logo.png"
-            alt="Biswa Bangla Social Networking Club"
-            className="w-36 h-36 object-contain"
-          />
+          <button onClick={() => onNavigate("welcome")}>
+            <img
+              src="/logo.png"
+              alt="Biswa Bangla Social Networking Club"
+              className="w-36 h-36 object-contain"
+            />
+          </button>
         </div>
 
         {/* Title & Subtitle */}
